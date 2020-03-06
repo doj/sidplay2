@@ -1,3 +1,7 @@
+/* c-basic-offset: 4; tab-width: 8; indent-tabs-mode: nil
+ * vi: set shiftwidth=4 tabstop=8 expandtab:
+ * :indentSize=4:tabSize=8:noTabs=true:
+ */
 // --------------------------------------------------------------------------
 // Advanced Linux Sound Architecture (ALSA) specific audio driver interface.
 // --------------------------------------------------------------------------
@@ -21,8 +25,7 @@
  *
  ***************************************************************************/
 
-#ifndef audio_alsa_h_
-#define audio_alsa_h_
+#pragma once
 
 #include "config.h"
 #ifdef   HAVE_ALSA
@@ -31,17 +34,11 @@
 #define AudioDriver Audio_ALSA
 #endif
 
-#include <stdio.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/asoundlib.h>
+#include <alsa/asoundlib.h>
 #include "../AudioBase.h"
 
-
-class Audio_ALSA: public AudioBase
-{	
+class Audio_ALSA : public AudioBase
+{
 private:  // ------------------------------------------------------- private
     snd_pcm_t * _audioHandle;
 
@@ -51,13 +48,11 @@ public:  // --------------------------------------------------------- public
     Audio_ALSA();
     ~Audio_ALSA();
 
-    void *open  (AudioConfig &cfg, const char *name);
-    void  close ();
-    // Rev 1.2 (saw) - Changed, see AudioBase.h	
-    void *reset ();
-    void *write ();
-    void  pause () {;}
+    void* open  (AudioConfig &cfg, const char *name) override;
+    void  close () override;
+    void* reset () override;
+    void* write () override;
+  void  pause () override;
 };
 
 #endif // HAVE_ALSA
-#endif // audio_alsa_h_

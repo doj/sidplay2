@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([sidplay], [2.0.9])
+AC_INIT([sidplay], [2.0.10])
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_MACRO_DIRS([unix])
 AC_CONFIG_AUX_DIR(unix)
@@ -66,17 +66,17 @@ case "$host" in
     *linux*) AC_DEFINE(HAVE_ALSA)
         audiodrv_libadd="./audio/alsa/libalsa.a"
         AC_MSG_RESULT(alsa)
-        AC_CHECK_LIB(asound, main, [AUDIO_LDADD=-lasound AC_SUBST(AUDIO_LDFLAGS)])
+        AC_CHECK_LIB(asound, main, [AUDIO_LDFLAGS=-lasound AC_SUBST(AUDIO_LDFLAGS)])
         ;;
     *netbsd*) AC_DEFINE(HAVE_OSS)
         audiodrv_libadd="./audio/oss/liboss.a"
         AC_MSG_RESULT(oss)
-        AC_CHECK_LIB(ossaudio, main, [AUDIO_LDADD=-lossaudio AC_SUBST(AUDIO_LDFLAGS)])
+        AC_CHECK_LIB(ossaudio, main, [AUDIO_LDFLAGS=-lossaudio AC_SUBST(AUDIO_LDFLAGS)])
         ;;
     *qnx*) AC_DEFINE(HAVE_QNX_ALSA)
         audiodrv_libadd="./audio/qnx_alsa/libqnx_alsa.a"
         AC_MSG_RESULT(qnx_alsa)
-        AC_CHECK_LIB(asound, main, [AUDIO_LDADD=-lasound AC_SUBST(AUDIO_LDFLAGS)])
+        AC_CHECK_LIB(asound, main, [AUDIO_LDFLAGS=-lasound AC_SUBST(AUDIO_LDFLAGS)])
         ;;
     *sgi*) AC_DEFINE(HAVE_SGI)
         AC_MSG_RESULT(sgi)
@@ -103,16 +103,12 @@ AC_LANG_CPLUSPLUS
 dnl Check for nothrow allocator.
 MY_CHECK_EXCEPTIONS
 
-dnl Check ANSI C++ ios features
-MY_CHECK_IOS_BIN
-MY_CHECK_IOS_OPENMODE
-
 dnl Check for libraries
 SID2_LIB_CHECKS
 SID2_FIND_LIBSIDPLAY2
 SID2_FIND_LIBSIDUTILS
 
-# Find sid builder emulations
+dnl Find sid builder emulations
 SID2_FIND_BUILDERS
 
 dnl Add absolute directory for header files

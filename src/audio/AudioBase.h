@@ -1,3 +1,7 @@
+/* c-basic-offset: 4; tab-width: 8; indent-tabs-mode: nil
+ * vi: set shiftwidth=4 tabstop=8 expandtab:
+ * :indentSize=4:tabSize=8:noTabs=true:
+ */
 /***************************************************************************
                           AudioBase.h  -  description
                              -------------------
@@ -33,26 +37,28 @@
  *
  ***************************************************************************/
 
-#ifndef _AudioBase_h_
-#define _AudioBase_h_
+#pragma once
 
-#include <string.h>
+#include <stdlib.h>
+#include <string>
 #include "AudioConfig.h"
 
 class AudioBase
 {
 protected:
     AudioConfig _settings;
-    const char *_errorString;
+    std::string _errorString;
     void       *_sampleBuffer;
+  const bool _debug;
 
 public:
-    AudioBase ()
-    {
-        _errorString  = "None";
-        _sampleBuffer = NULL;
-    }
-    virtual ~AudioBase () {;}
+  AudioBase () :
+    _errorString("None"),
+    _sampleBuffer(NULL),
+    _debug(getenv("SIDPLAY2_DEBUG"))
+  {
+  }
+    virtual ~AudioBase () {}
 
     // All drivers must support these
     virtual void *open  (AudioConfig &cfg, const char *name) = 0;
@@ -70,11 +76,9 @@ public:
     {
         cfg = _settings;
     }
-    
-    const char *getErrorString () const
+
+    const char* getErrorString () const
     {
-        return _errorString;
+      return _errorString.c_str();
     }
 };
-
-#endif // _AudioBase_h_

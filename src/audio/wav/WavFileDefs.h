@@ -29,19 +29,12 @@
  *
  ***************************************************************************/
 
-#ifndef WAV_FILE_DEFS_H
-#define WAV_FILE_DEFS_H
-
+#pragma once
 #include "config.h"
 
 #undef WAV_WORDS_BIGENDIAN
 #if defined(WORDS_BIGENDIAN)
   #define WAV_WORDS_BIGENDIAN
-#endif
-
-#undef HAVE_IOS_BIN
-#if defined(HAVE_IOS_BIN)
-  #define WAV_HAVE_IOS_BIN
 #endif
 
 #undef WAV_HAVE_EXCEPTIONS
@@ -54,13 +47,6 @@
   #define HAVE_BAD_COMPILER
 #endif
 
-#undef WAV_HAVE_IOS_OPENMODE
-#ifdef HAVE_IOS_OPENMODE
-  #define WAV_HAVE_IOS_OPENMODE
-#endif
-
 /* Whether to revert any changes applied to the endian-ess of the
    non-const sample buffer contents after they have been written. */
 #undef WAV_REVERT_BUFFER_CHANGES
-
-#endif /* WAV_FILE_DEFS_H */

@@ -59,4 +59,3 @@ public:  // --------------------------------------------------------- public
 };
 
 #endif // HAVE_ALSA
-#endif // audio_alsa_h_

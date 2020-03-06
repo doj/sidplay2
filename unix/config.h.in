@@ -37,12 +37,6 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define if standard member ``ios::binary'' is called ``ios::bin''. */
-#undef HAVE_IOS_BIN
-
-/* Define if ``ios::openmode'' is supported. */
-#undef HAVE_IOS_OPENMODE
-
 /* Define to 1 if you have the <linux/soundcard.h> header file. */
 #undef HAVE_LINUX_SOUNDCARD_H
 

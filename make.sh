@@ -10,7 +10,12 @@ if [ "$1" = clean ] ; then
     exit
 fi
 
+if [ "$1" = debug ] ; then
+    shift
+    DEBUG="CXXFLAGS='-g -O0'"
+fi
+
 set -e
 autoreconf --install --symlink --verbose
-./configure "$@"
+./configure $DEBUG "$@"
 make

@@ -1,3 +1,7 @@
+/* c-basic-offset: 4; tab-width: 8; indent-tabs-mode: nil
+ * vi: set shiftwidth=4 tabstop=8 expandtab:
+ * :indentSize=4:tabSize=8:noTabs=true:
+ */
 // --------------------------------------------------------------------------
 // Advanced Linux Sound Architecture (ALSA) specific audio driver interface.
 // --------------------------------------------------------------------------
@@ -47,41 +51,68 @@ Audio_ALSA::~Audio_ALSA ()
     close ();
 }
 
-void Audio_ALSA::outOfOrder ()
+void
+Audio_ALSA::outOfOrder ()
 {
     // Reset everything.
     _errorString = "None";
     _audioHandle = NULL;
 }
 
-void *Audio_ALSA::open (AudioConfig &cfg, const char *)
+void*
+Audio_ALSA::open (AudioConfig &cfg, const char *)
 {
-    AudioConfig tmpCfg;
+    // Transfer input parameters to this object.
+    // May later be replaced with driver defaults.
+    AudioConfig tmpCfg = cfg;
     int mask, wantedFormat, format;
-    int rtn;
     int card = -1, dev = 0;
-   
+
     if (_audioHandle != NULL)
     {
         _errorString = "ERROR: Device already in use";
         return NULL;
     }
 
+#if 1
+
+    const char *alsa_device = "default";
+
+    int err;
+    if ((err = snd_pcm_open(&_audioHandle, alsa_device, SND_PCM_STREAM_PLAYBACK, 0)) < 0)
+      {
+        _errorString = "ERROR: Could not open audio device: ";
+	_errorString += snd_strerror(err);
+        goto open_error;
+    }
+
+    if ((err = snd_pcm_set_params(_audioHandle,
+                                  ( tmpCfg.precision == 8 ) ? SND_PCM_FORMAT_U8 : SND_PCM_FORMAT_S16_LE,
+                                  SND_PCM_ACCESS_RW_INTERLEAVED,
+                                  tmpCfg.channels,
+                                  tmpCfg.frequency,
+                                  1, // soft_resample
+                                  500000) // required overall latency in us (0.5s)
+	 ) < 0) {
+      _errorString = "ERROR: Could not set parameters: ";
+      _errorString += snd_strerror(err);
+      goto open_error;
+    }
+
+    _sampleBuffer = malloc(tmpCfg.bufSize);
+
+#else
     if ((rtn = snd_pcm_open_preferred (&_audioHandle, &card, &dev, SND_PCM_OPEN_PLAYBACK)))
     {
         _errorString = "ERROR: Could not open audio device.";
         goto open_error;
     }
-    
-    // Transfer input parameters to this object.
-    // May later be replaced with driver defaults.
-    tmpCfg = cfg;
 
     snd_pcm_channel_params_t pp;
     snd_pcm_channel_setup_t setup;
- 
+
     snd_pcm_channel_info_t pi;
-   
+
     memset (&pi, 0, sizeof (pi));
     pi.channel = SND_PCM_CHANNEL_PLAYBACK;
     if ((rtn = snd_pcm_plugin_info (_audioHandle, &pi)))
@@ -89,23 +120,23 @@ void *Audio_ALSA::open (AudioConfig &cfg, const char *)
         _errorString = "ALSA: snd_pcm_plugin_info failed.";
         goto open_error;
     }
-			
+
     memset(&pp, 0, sizeof (pp));
-	
+
     pp.mode = SND_PCM_MODE_BLOCK;
     pp.channel = SND_PCM_CHANNEL_PLAYBACK;
     pp.start_mode = SND_PCM_START_FULL;
     pp.stop_mode = SND_PCM_STOP_STOP;
-				     
+
     pp.buf.block.frag_size = pi.max_fragment_size;
 
     pp.buf.block.frags_max = 1;
     pp.buf.block.frags_min = 1;
-   
+
     pp.format.interleave = 1;
     pp.format.rate = tmpCfg.frequency;
     pp.format.voices = tmpCfg.channels;
-   
+
     // Set sample precision and type of encoding.
     if ( tmpCfg.precision == 8 )
     {
@@ -123,13 +154,13 @@ void *Audio_ALSA::open (AudioConfig &cfg, const char *)
         _errorString = "ALSA: snd_pcm_plugin_params failed.";
         goto open_error;
     }
-   
+
     if ((rtn = snd_pcm_plugin_prepare (_audioHandle, SND_PCM_CHANNEL_PLAYBACK)) < 0)
     {
         _errorString = "ALSA: snd_pcm_plugin_prepare failed.";
         goto open_error;
     }
-   
+
     memset (&setup, 0, sizeof (setup));
     setup.channel = SND_PCM_CHANNEL_PLAYBACK;
     if ((rtn = snd_pcm_plugin_setup (_audioHandle, &setup)) < 0)
@@ -144,6 +175,7 @@ void *Audio_ALSA::open (AudioConfig &cfg, const char *)
 #else
     _sampleBuffer = new int_least8_t[tmpCfg.bufSize];
 #endif
+#endif
 
     if (!_sampleBuffer)
     {
@@ -155,45 +187,81 @@ void *Audio_ALSA::open (AudioConfig &cfg, const char *)
     _settings = tmpCfg;
     // Update the users settings
     getConfig (cfg);
+    if (_debug)
+      {
+	fprintf(stderr, "\nset up ALSA for %i channels, %i samples/sec, %i bits/sample\n", (int)tmpCfg.channels, (int)tmpCfg.frequency, (int)tmpCfg.precision);
+      }
     return _sampleBuffer;
 
 open_error:
+    if (_debug)
+      {
+	fprintf(stderr, "\n%s\n", _errorString.c_str());
+      }
     if (_audioHandle != NULL)
     {
         close ();
     }
 
     perror ("ALSA");
-return NULL;
+    return NULL;
 }
 
 // Close an opened audio device, free any allocated buffers and
 // reset any variables that reflect the current state.
-void Audio_ALSA::close ()
+void
+Audio_ALSA::close ()
 {
     if (_audioHandle != NULL )
     {
         snd_pcm_close(_audioHandle);
-        delete [] _sampleBuffer;
+	if (_sampleBuffer)
+	  {
+	    free(_sampleBuffer);
+	    _sampleBuffer = NULL;
+	  }
         outOfOrder ();
     }
 }
 
-void *Audio_ALSA::reset ()
+void*
+Audio_ALSA::reset ()
 {
-    return (void *) _sampleBuffer;   
+    return _sampleBuffer;
 }
 
-void *Audio_ALSA::write ()
+void*
+Audio_ALSA::write ()
 {
     if (_audioHandle == NULL)
     {
         _errorString = "ERROR: Device not open.";
         return NULL;
     }
-
+#if 1
+    snd_pcm_sframes_t frames = snd_pcm_writei(_audioHandle, _sampleBuffer, _settings.bufSize);
+    if (frames < 0)
+      {
+	frames = snd_pcm_recover(_audioHandle, frames, 0);
+      }
+    if (frames < 0)
+      {
+        _errorString = "ERROR: write failed: ";
+	_errorString += snd_strerror(frames);
+	if (_debug)
+	  {
+	    fprintf(stderr, "\n%s\n", _errorString.c_str());
+	  }
+      }
+#else
     snd_pcm_plugin_write (_audioHandle, _sampleBuffer, _settings.bufSize);
-    return (void *) _sampleBuffer;
+#endif
+    return _sampleBuffer;
+}
+
+void
+Audio_ALSA::pause()
+{
 }
 
 #endif // HAVE_ALSA

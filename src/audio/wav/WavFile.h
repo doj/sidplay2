@@ -1,7 +1,7 @@
 /*
  * A basic WAV output file type - Interface.
  * Initial implementation by Michael Schwendt <mschwendt@yahoo.com>
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -41,8 +41,7 @@
  *
  ***************************************************************************/
 
-#ifndef WAV_FILE_HEADER_H
-#define WAV_FILE_HEADER_H
+#pragma once
 
 #include <iostream>
 #include <iomanip>
@@ -65,7 +64,7 @@ struct wavHeader                        // little endian format
     unsigned char bytesPerSec[4];        // sampleFreq * blockAlign
     unsigned char blockAlign[2];        // bytes per sample * channels
     unsigned char bitsPerSample[2];
-    
+
     char dataChunkID[4];                // keyword, begin of data chunk; = 'data' (ASCII)
 
     unsigned char dataChunkLen[4];        // length of data
@@ -79,14 +78,14 @@ private:
     static const wavHeader defaultWavHdr;
     wavHeader wavHdr;
 
-    std::fstream file;
+    std::ofstream file;
     bool isOpen;         // whether file has been opened
     bool headerWritten;  // whether final header has been written
 
 public:
 
     WavFile();
-    
+
     // Only unsigned 8-bit, and signed 16-bit, samples are supported.
     // Endian-ess is adjusted if necessary.
     //
@@ -97,17 +96,17 @@ public:
     { return open (cfg, name, true); }
     void *open(AudioConfig &cfg, const char *name,
                const bool overWrite);
-    
+
     // After write call old buffer is invalid and you should
     // use the new buffer provided instead.
-    void *write();
-    void  close();
-    void  pause() {;}
+    void* write() override;
+    void  close() override;
+    void  pause() override {}
     const char *extension () const { return ".wav"; }
     ~WavFile() { close(); }
-    
+
     // Rev 1.3 (saw) - Changed, see AudioBase.h
-    void *reset ()
+    void* reset () override
     {
         if (isOpen)
             return _sampleBuffer;
@@ -121,5 +120,3 @@ public:
     operator bool()  const { return (file.good() != 0); }
     bool operator!() const { return (file.fail() != 0); }
 };
-
-#endif /* WAVE_FILE_HEADER_H */
