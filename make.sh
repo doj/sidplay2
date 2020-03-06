@@ -11,6 +11,6 @@ if [ "$1" = clean ] ; then
 fi
 
 set -e
-autoreconf --install --symlink
+autoreconf --install --symlink --verbose
 ./configure "$@"
 make

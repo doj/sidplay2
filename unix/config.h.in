@@ -13,6 +13,12 @@
 #undef HAVE_WAV_ONLY
 
 
+
+/* Define supported builder */
+#undef HAVE_RESID_BUILDER
+#undef HAVE_HARDSID_BUILDER
+    
+
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
@@ -25,8 +31,17 @@
 /* Define to 1 if you have the <dmedia/audio.h> header file. */
 #undef HAVE_DMEDIA_AUDIO_H
 
+/* Define if your C++ compiler implements exception-handling. */
+#undef HAVE_EXCEPTIONS
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define if standard member ``ios::binary'' is called ``ios::bin''. */
+#undef HAVE_IOS_BIN
+
+/* Define if ``ios::openmode'' is supported. */
+#undef HAVE_IOS_OPENMODE
 
 /* Define to 1 if you have the <linux/soundcard.h> header file. */
 #undef HAVE_LINUX_SOUNDCARD_H

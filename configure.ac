@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT([sidplay], [2.0.9])
 AC_CONFIG_SRCDIR([Makefile.am])
+AC_CONFIG_MACRO_DIRS([unix])
 AC_CONFIG_AUX_DIR(unix)
 AM_CONFIG_HEADER(unix/config.h)
 
