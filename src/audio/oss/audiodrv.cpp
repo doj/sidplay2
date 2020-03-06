@@ -291,7 +291,8 @@ void *Audio_OSS::write ()
 
     }
 
-    ::write (_audiofd, _sampleBuffer, (size_t) _settings.bufSize);
+    auto w = ::write (_audiofd, _sampleBuffer, (size_t) _settings.bufSize);
+    (void)w;
     return _sampleBuffer;
 }
 

@@ -258,10 +258,15 @@ int _kbhit (void)
 
 char _getch (void)
 {
-    char ch = -1;
     if (infd >= 0)
-        read (infd, &ch, 1);
-    return ch;
+      {
+	char ch = -1;
+        if (read (infd, &ch, 1) == 1)
+	  {
+	    return ch;
+	  }
+      }
+    return -1;
 }
 
 // Set keyboard to raw mode to getch will work

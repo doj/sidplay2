@@ -59,6 +59,7 @@
 #include <sidplay/sidplay2.h>
 #include "config.h"
 #include "IniConfig.h"
+#include <string>
 
 #ifdef HAVE_UNIX
 #   include <sys/types.h>
@@ -385,46 +386,39 @@ bool IniConfig::readEmulation (ini_fd_t ini)
 
 void IniConfig::read ()
 {
-    char   *path = (char *) getenv ("HOME");
     ini_fd_t ini  = 0;
-    char   *configPath;
-    size_t  length;
 
-    if (!path)
-        path = (char *) getenv ("windir");
-
-    if (!path)
-        path = "";
-
-    length     = strlen (path) + strlen (DIR_NAME) + strlen (FILE_NAME) + 3;
-    configPath = (char *) malloc (length);
-    if (!configPath)
-        goto IniConfig_read_error;
-
-    {   // Format path from system
-        char *s = path;
-        while (*s != '\0')
-        {
-            if (*s == '\\')
-                *s = '/';
-            s++;
-        }
+    std::string path;
+    {
+      const char *p = getenv ("HOME");
+      if (!p)
+        p = getenv ("windir");
+      if (!p)
+        p = "";
+      path = p;
     }
 
+    // Format path from system
+    for(size_t i = 0; i < path.size(); ++i)
+      {
+	if (path[i] == '\\')
+	  path[i] = '/';
+      }
+
 #ifdef HAVE_UNIX
-    sprintf (configPath, "%s/%s", path, DIR_NAME);
+    path += '/';
+    path += DIR_NAME;
 
     // Make sure the config path exists
-    if (!opendir (configPath))
-        mkdir (configPath, 0755);
-
-    sprintf (configPath, "%s/%s", configPath, FILE_NAME);
-#else
-    sprintf (configPath, "%s/%s", path, FILE_NAME);
+    if (!opendir (path.c_str()))
+        mkdir (path.c_str(), 0755);
 #endif
 
+    path += '/';
+    path += FILE_NAME;
+
     // Opens an existing file or creates a new one
-    ini = ini_open (configPath, "w", ";");
+    ini = ini_open (path.c_str(), "w", ";");
 
     // Unable to open file?
     if (!ini)
