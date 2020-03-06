@@ -1,3 +1,7 @@
+Release Notes 2.0.10:
+
+fix Linux ALSA
+
 Release Notes 2.0.9:
 
 Merged Windows code based adding new command line flags for debuging.
