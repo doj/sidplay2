@@ -77,6 +77,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
+#include <string>
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -95,7 +96,7 @@ using std::endl;
 // Convert time from integer
 bool ConsolePlayer::parseTime (const char *str, uint_least32_t &time)
 {
-    char *sep;
+    const char *sep;
     uint_least32_t _time;
 
     // Check for empty string
@@ -110,8 +111,7 @@ bool ConsolePlayer::parseTime (const char *str, uint_least32_t &time)
     else
     {   // Read in MM:SS format
         int val;
-        *sep = '\0';
-        val  = atoi (str);
+        val  = atoi (std::string(str, sep - str).c_str());
         if (val < 0 || val > 99)
             return false;
         _time = (uint_least32_t) val * 60;
