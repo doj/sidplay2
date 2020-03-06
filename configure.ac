@@ -1,10 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(Makefile.am)
+AC_INIT([sidplay], [2.0.9])
+AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_AUX_DIR(unix)
 AM_CONFIG_HEADER(unix/config.h)
 
 dnl Setup library CURRENT, REVISION and AGE
-AM_INIT_AUTOMAKE(sidplay,2.0.9)
+AM_INIT_AUTOMAKE
 
 AC_CANONICAL_HOST
 
@@ -21,13 +22,14 @@ AC_C_BIGENDIAN
 
 dnl Checks what version of Unix we have and soundcard support
 AC_CHECK_HEADERS(sys/ioctl.h linux/soundcard.h machine/soundcard.h  \
-soundcard.h sys/audio.h sun/audioio.h sun/dbriio.h sys/audioio.h  \
+sys/soundcard.h soundcard.h sys/audio.h sun/audioio.h sun/dbriio.h sys/audioio.h  \
 audio.h dmedia/audio.h)
 
 AH_TOP(
 [/* Define supported audio driver */
 #undef HAVE_HARDSID
 #undef HAVE_ALSA
+#undef HAVE_QNX_ALSA
 #undef HAVE_IRIX
 #undef HAVE_HPUX
 #undef HAVE_MMSYSTEM
@@ -60,18 +62,19 @@ case "$host" in
         AC_MSG_RESULT(irix)
         AC_CHECK_LIB(audio, main, [AUDIO_LDADD=-laudio AC_SUBST(AUDIO_LDADD)])
         ;;
-    *linux*) AC_DEFINE(HAVE_OSS)
-        audiodrv_libadd="./audio/oss/liboss.a"
-        AC_MSG_RESULT(oss)
+    *linux*) AC_DEFINE(HAVE_ALSA)
+        audiodrv_libadd="./audio/alsa/libalsa.a"
+        AC_MSG_RESULT(alsa)
+        AC_CHECK_LIB(asound, main, [AUDIO_LDADD=-lasound AC_SUBST(AUDIO_LDFLAGS)])
         ;;
     *netbsd*) AC_DEFINE(HAVE_OSS)
         audiodrv_libadd="./audio/oss/liboss.a"
         AC_MSG_RESULT(oss)
-        AC_CHECK_LIB(ossaudio, main, [AUDIO_LDADD=-lossaudio AC_SUBST(AUDIO_LDFLAGS)]) 
+        AC_CHECK_LIB(ossaudio, main, [AUDIO_LDADD=-lossaudio AC_SUBST(AUDIO_LDFLAGS)])
         ;;
-    *qnx*) AC_DEFINE(HAVE_ALSA)
-        audiodrv_libadd="./audio/alsa/libalsa.a"
-        AC_MSG_RESULT(alsa)
+    *qnx*) AC_DEFINE(HAVE_QNX_ALSA)
+        audiodrv_libadd="./audio/qnx_alsa/libqnx_alsa.a"
+        AC_MSG_RESULT(qnx_alsa)
         AC_CHECK_LIB(asound, main, [AUDIO_LDADD=-lasound AC_SUBST(AUDIO_LDFLAGS)])
         ;;
     *sgi*) AC_DEFINE(HAVE_SGI)
@@ -125,6 +128,7 @@ doc/en/Makefile \
 src/Makefile \
 src/audio/Makefile \
 src/audio/alsa/Makefile \
+src/audio/qnx_alsa/Makefile \
 src/audio/hpux/Makefile \
 src/audio/irix/Makefile \
 src/audio/mmsystem/Makefile \

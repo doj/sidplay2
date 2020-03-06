@@ -3,6 +3,7 @@
 /* Define supported audio driver */
 #undef HAVE_HARDSID
 #undef HAVE_ALSA
+#undef HAVE_QNX_ALSA
 #undef HAVE_IRIX
 #undef HAVE_HPUX
 #undef HAVE_MMSYSTEM
@@ -12,11 +13,8 @@
 #undef HAVE_WAV_ONLY
 
 
-
-/* Define supported builder */
-#undef HAVE_RESID_BUILDER
-#undef HAVE_HARDSID_BUILDER
-    
+/* Define if building universal (internal helper macro) */
+#undef AC_APPLE_UNIVERSAL_BUILD
 
 /* Define to 1 if you have the <audio.h> header file. */
 #undef HAVE_AUDIO_H
@@ -27,17 +25,8 @@
 /* Define to 1 if you have the <dmedia/audio.h> header file. */
 #undef HAVE_DMEDIA_AUDIO_H
 
-/* Define if your C++ compiler implements exception-handling. */
-#undef HAVE_EXCEPTIONS
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define if standard member ``ios::binary'' is called ``ios::bin''. */
-#undef HAVE_IOS_BIN
-
-/* Define if ``ios::openmode'' is supported. */
-#undef HAVE_IOS_OPENMODE
 
 /* Define to 1 if you have the <linux/soundcard.h> header file. */
 #undef HAVE_LINUX_SOUNDCARD_H
@@ -78,6 +67,9 @@
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #undef HAVE_SYS_IOCTL_H
 
+/* Define to 1 if you have the <sys/soundcard.h> header file. */
+#undef HAVE_SYS_SOUNDCARD_H
+
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
 
@@ -86,6 +78,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
+#undef LT_OBJDIR
 
 /* Name of package */
 #undef PACKAGE
@@ -102,6 +97,9 @@
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
 
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
@@ -111,6 +109,14 @@
 /* Version number of package */
 #undef VERSION
 
-/* Define to 1 if your processor stores words with the most significant byte
-   first (like Motorola and SPARC, unlike Intel and VAX). */
-#undef WORDS_BIGENDIAN
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#  undef WORDS_BIGENDIAN
+# endif
+#endif
