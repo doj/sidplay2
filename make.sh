@@ -12,7 +12,7 @@ fi
 
 if [ "$1" = debug ] ; then
     shift
-    DEBUG="CXXFLAGS='-g -O0'"
+    DEBUG=--enable-debug
 fi
 
 set -e

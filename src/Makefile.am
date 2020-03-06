@@ -16,3 +16,5 @@ $(BUILDERS_LDFLAGS)
 
 # Remove bad default includes
 DEFAULT_INCLUDES=
+
+AM_CFLAGS = $(DEBUG_CFLAGS)

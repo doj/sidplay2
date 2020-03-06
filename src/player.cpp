@@ -555,7 +555,15 @@ void ConsolePlayer::emuflush ()
 bool ConsolePlayer::play ()
 {
     void *buffer = m_driver.selected->buffer ();
+    if (! buffer)
+      {
+	return false;
+      }
     uint_least32_t length = m_driver.cfg.bufSize;
+    if (length == 0)
+      {
+	return false;
+      }
 
     if (m_state == playerRunning)
     {

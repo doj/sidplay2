@@ -8,6 +8,7 @@ AM_CONFIG_HEADER(unix/config.h)
 dnl Setup library CURRENT, REVISION and AGE
 AM_INIT_AUTOMAKE
 
+ACX_DEBUG_CFLAGS
 AC_CANONICAL_HOST
 
 dnl Checks for programs.

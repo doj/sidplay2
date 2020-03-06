@@ -80,11 +80,9 @@ AC_DEFUN([MY_TRY_COMPILE],
 [
     my_save_cxxflags=$CXXFLAGS
     my_save_ldflags=$LDFLAGS
-    my_save_cxx=$CXX
 
     CXXFLAGS="$CXXFLAGS $1"
     LDFLAGS="$LDFLAGS $2"
-    CXX="${SHELL-/bin/sh} ${srcdir}/libtool --mode=link $CXX"
 
     AC_TRY_LINK(
         [#include <$3>],
@@ -95,7 +93,6 @@ AC_DEFUN([MY_TRY_COMPILE],
 
     CXXFLAGS=$my_save_cxxflags
     LDFLAGS=$my_save_ldflags
-    CXX=$my_save_cxx
 ])
 
 
