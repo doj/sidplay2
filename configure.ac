@@ -27,6 +27,8 @@ AC_CHECK_HEADERS(sys/ioctl.h linux/soundcard.h machine/soundcard.h  \
 sys/soundcard.h soundcard.h sys/audio.h sun/audioio.h sun/dbriio.h sys/audioio.h  \
 audio.h dmedia/audio.h)
 
+AC_ARG_WITH(alsa,[  --with-alsa             Use ALSA library for sound],[WANT_ALSA=$withval],[WANT_ALSA=yes])
+
 AH_TOP(
 [/* Define supported audio driver */
 #undef HAVE_HARDSID
@@ -64,11 +66,20 @@ case "$host" in
         AC_MSG_RESULT(irix)
         AC_CHECK_LIB(audio, main, [AUDIO_LDADD=-laudio AC_SUBST(AUDIO_LDADD)])
         ;;
-    *linux*) AC_DEFINE(HAVE_ALSA)
-        audiodrv_libadd="./audio/alsa/libalsa.a"
-        AC_MSG_RESULT(alsa)
-        AC_CHECK_LIB(asound, main, [AUDIO_LDFLAGS=-lasound AC_SUBST(AUDIO_LDFLAGS)])
-        ;;
+
+    *linux*)
+       if test "$WANT_ALSA" = "yes" ; then
+         AC_DEFINE(HAVE_ALSA)
+	 audiodrv_libadd="./audio/alsa/libalsa.a"
+	 AC_MSG_RESULT(alsa)
+	 AC_CHECK_LIB(asound, main, [AUDIO_LDFLAGS=-lasound AC_SUBST(AUDIO_LDFLAGS)])
+       else
+         AC_DEFINE(HAVE_OSS)
+         audiodrv_libadd="./audio/oss/liboss.a"
+         AC_MSG_RESULT(oss)
+       fi
+       ;;
+
     *netbsd*) AC_DEFINE(HAVE_OSS)
         audiodrv_libadd="./audio/oss/liboss.a"
         AC_MSG_RESULT(oss)

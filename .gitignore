@@ -58,3 +58,4 @@ unix/lt~obsolete.m4
 unix/missing
 unix/sidplay2.spec
 unix/stamp-h1
+src/sidplay2
