@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src/audio/wav
+subdir = src/audio/raw
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/unix/my_macros.m4 \
 	$(top_srcdir)/unix/sidplay2.m4 $(top_srcdir)/configure.ac
@@ -105,10 +105,10 @@ AM_V_AR = $(am__v_AR_@AM_V@)
 am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
 am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
-libwav_a_AR = $(AR) $(ARFLAGS)
-libwav_a_LIBADD =
-am_libwav_a_OBJECTS = WavFile.$(OBJEXT)
-libwav_a_OBJECTS = $(am_libwav_a_OBJECTS)
+libraw_a_AR = $(AR) $(ARFLAGS)
+libraw_a_LIBADD =
+am_libraw_a_OBJECTS = RawFile.$(OBJEXT)
+libraw_a_OBJECTS = $(am_libraw_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -123,7 +123,7 @@ am__v_at_0 = @
 am__v_at_1 = 
 depcomp = $(SHELL) $(top_srcdir)/unix/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/WavFile.Po
+am__depfiles_remade = ./$(DEPDIR)/RawFile.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -165,8 +165,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libwav_a_SOURCES)
-DIST_SOURCES = $(libwav_a_SOURCES)
+SOURCES = $(libraw_a_SOURCES)
+DIST_SOURCES = $(libraw_a_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -324,8 +324,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-noinst_LIBRARIES = libwav.a
-libwav_a_SOURCES = WavFile.cpp WavFile.h WavFileDefs.h 
+noinst_LIBRARIES = libraw.a
+libraw_a_SOURCES = RawFile.cpp RawFile.h 
 
 # Remove bad default includes
 DEFAULT_INCLUDES = 
@@ -342,9 +342,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/audio/wav/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/audio/raw/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/audio/wav/Makefile
+	  $(AUTOMAKE) --gnu src/audio/raw/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -366,10 +366,10 @@ $(am__aclocal_m4_deps):
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 
-libwav.a: $(libwav_a_OBJECTS) $(libwav_a_DEPENDENCIES) $(EXTRA_libwav_a_DEPENDENCIES) 
-	$(AM_V_at)-rm -f libwav.a
-	$(AM_V_AR)$(libwav_a_AR) libwav.a $(libwav_a_OBJECTS) $(libwav_a_LIBADD)
-	$(AM_V_at)$(RANLIB) libwav.a
+libraw.a: $(libraw_a_OBJECTS) $(libraw_a_DEPENDENCIES) $(EXTRA_libraw_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libraw.a
+	$(AM_V_AR)$(libraw_a_AR) libraw.a $(libraw_a_OBJECTS) $(libraw_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libraw.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -377,7 +377,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WavFile.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RawFile.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -537,7 +537,7 @@ clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/WavFile.Po
+		-rm -f ./$(DEPDIR)/RawFile.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -583,7 +583,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/WavFile.Po
+		-rm -f ./$(DEPDIR)/RawFile.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
