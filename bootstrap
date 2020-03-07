@@ -1,6 +1,19 @@
 #!/bin/sh
+
+if [ "$1" = clean ] ; then
+    make mainter-clean
+    rm config.log Makefile config.status aclocal.m4 configure
+    rm -rf autom4te.cache/ src/.deps/
+    find . -name '*~' -delete
+    find . -name Makefile.in -delete
+    exit
+fi
+
+set -e
 aclocal -I unix
 libtoolize --force --copy
 autoheader --force
 automake --force --add-missing --copy
 autoconf --force
+./configure
+make
