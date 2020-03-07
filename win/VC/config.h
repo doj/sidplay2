@@ -29,4 +29,10 @@
 /* Version number of package */
 #define VERSION "2.0.8"
 
+<<<<<<< HEAD
+=======
+/* Define to 1 for COM libsidplay2 interface */
+#define HAVE_SID2_COM 1
+
+>>>>>>> sourceforge-trunk-fix
 #endif // _config_h_

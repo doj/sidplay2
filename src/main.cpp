@@ -15,7 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: main.cpp,v $
+=======
+ *  $Log: not supported by cvs2svn $
+ *  Revision 1.33  2005/06/10 19:12:51  s_a_white
+ *  MingW support added.
+ *
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.32  2004/02/26 18:19:22  s_a_white
  *  Updates for VC7 (use real libstdc++ headers instead of draft ones).
  *
@@ -157,9 +164,16 @@ main_restart:
         goto main_error;
     }
 
+<<<<<<< HEAD
 #ifdef HAVE_UNIX
     // Configure terminal to allow direct access to key events
     keyboard_enable_raw ();
+=======
+#if defined(HAVE_UNIX) && !defined(HAVE_MINGW)
+    // Configure terminal to allow direct access to key events
+    if (player.verbose () > -2)
+        keyboard_enable_raw ();
+>>>>>>> sourceforge-trunk-fix
 #endif // HAVE_UNIX
 
     // Play loop
@@ -169,8 +183,14 @@ main_restart:
             break;
     }
 
+<<<<<<< HEAD
 #ifdef HAVE_UNIX
     keyboard_disable_raw ();
+=======
+#if defined(HAVE_UNIX) && !defined(HAVE_MINGW)
+    if (player.verbose () > -2)
+        keyboard_disable_raw ();
+>>>>>>> sourceforge-trunk-fix
 #endif
 
     // Restore default signal error handlers

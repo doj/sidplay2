@@ -17,10 +17,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: WavFile.cpp,v $
  *  Revision 1.11  2004/02/26 18:19:52  s_a_white
  *  Updates for VC7 (use real libstdc++ headers instead of draft ones).
  *
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.10  2002/03/04 19:07:48  s_a_white
  *  Fix C++ use of nothrow.
  *
@@ -65,6 +69,16 @@
 #   include <new>
 #endif
 
+<<<<<<< HEAD
+=======
+#if defined(WAV_HAVE_IOS_OPENMODE)
+    typedef std::ios::openmode openmode;
+#else
+    typedef int openmode;
+#endif
+
+
+>>>>>>> sourceforge-trunk-fix
 const wavHeader WavFile::defaultWavHdr = {
     // ASCII keywords are hex-ified.
     {0x52,0x49,0x46,0x46}, {0,0,0,0}, {0x57,0x41,0x56,0x45},
@@ -104,7 +118,11 @@ void* WavFile::open(AudioConfig &cfg, const char* name,
 
     if (isOpen && !file.fail())
         close();
+<<<<<<< HEAD
 
+=======
+   
+>>>>>>> sourceforge-trunk-fix
     byteCount = 0;
 
     // We need to make a buffer for the user
@@ -125,12 +143,26 @@ void* WavFile::open(AudioConfig &cfg, const char* name,
     endian_little16(wavHdr.bitsPerSample,bits);
     endian_little32(wavHdr.dataChunkLen,0);
 
+<<<<<<< HEAD
     auto createAttr = std::ios_base::out | std::ios_base::binary;
 
     if (overWrite)
         file.open( name, createAttr|std::ios_base::trunc );
     else
         file.open( name, createAttr|std::ios_base::app );
+=======
+    openmode createAttr = std::ios::out;
+#if defined(WAV_HAVE_IOS_BIN)
+    createAttr |= std::ios::bin;
+#else
+    createAttr |= std::ios::binary;
+#endif
+
+    if (overWrite)
+        file.open( name, createAttr|std::ios::trunc );
+    else
+        file.open( name, createAttr|std::ios::app );
+>>>>>>> sourceforge-trunk-fix
 
     isOpen = !(file.fail() || file.tellp());
     _settings = cfg;

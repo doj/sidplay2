@@ -15,7 +15,27 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: player.h,v $
+=======
+ *  $Log: not supported by cvs2svn $
+ *  Revision 1.15  2007/01/27 11:16:17  s_a_white
+ *  Unfortunate confusion between SidBuilder and SidEmulation in cfg variable.  We
+ *  are passing in a builder not emulation, so update the queried interface.
+ *
+ *  Revision 1.14  2007/01/27 10:20:49  s_a_white
+ *  Updated to use better COM emulation interface.
+ *
+ *  Revision 1.13  2006/10/30 19:32:06  s_a_white
+ *  Switch sidplay2 class to iinterface.
+ *
+ *  Revision 1.12  2006/10/16 21:45:55  s_a_white
+ *  Merge verbose and quiet levels.
+ *
+ *  Revision 1.11  2005/11/30 22:49:48  s_a_white
+ *  Add raw output support (--raw=<file>)
+ *
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.10  2004/02/12 05:58:03  s_a_white
  *  Update argurements and help menu handling.
  *
@@ -59,6 +79,12 @@
 #   define  sidplay2 sidplay
 #else
 #   include <sidplay/sidplay2.h>
+<<<<<<< HEAD
+=======
+#   ifdef HAVE_SID2_COM
+#   include <sidplay/sidlazyiptr.h>
+#   endif
+>>>>>>> sourceforge-trunk-fix
 #endif
 
 #include <sidplay/utils/SidDatabase.h>
@@ -99,7 +125,12 @@ typedef enum {/* Define possible output sources */
               /* Hardware */
               OUT_SOUNDCARD,
               /* File creation support */
+<<<<<<< HEAD
               OUT_WAV, OUT_AU, OUT_END} OUTPUTS;
+=======
+              OUT_WAV, OUT_AU, OUT_RAW,
+              OUT_END} OUTPUTS;
+>>>>>>> sourceforge-trunk-fix
 
 // Error and status message numbers.
 enum
@@ -127,8 +158,22 @@ private:
     TSID               m_tsid;
 #endif
 
+<<<<<<< HEAD
     const char* const  m_name; 
     sidplay2           m_engine;
+=======
+    const char* const  m_name;
+#ifdef HAVE_SID2_COM
+    SidIPtr<ISidplay2> m_engine;
+    SidIPtr<ISidTimer> m_engineTimer;
+    SidLazyIPtr<ISidUnknown> m_sidBuilder;
+#else
+    sidplay2           m_theEngine; // Do not use
+    sidplay2 * const   m_engine;    // Use me
+    sidplay2 * const   m_engineTimer;
+    sidbuilder        *m_sidBuilder;
+#endif
+>>>>>>> sourceforge-trunk-fix
     sid2_config_t      m_engCfg;
     SidTuneMod         m_tune;
     player_state_t     m_state;
@@ -140,8 +185,12 @@ private:
     SidDatabase        m_database;
 
     // Display parameters
+<<<<<<< HEAD
     uint_least8_t      m_quietLevel;
     uint_least8_t      m_verboseLevel;
+=======
+    int_least8_t       m_verboseLevel;
+>>>>>>> sourceforge-trunk-fix
 
     uint_least32_t     m_crc;
     bool               m_cpudebug;
@@ -211,12 +260,22 @@ public:
     ConsolePlayer (const char * const name);
     virtual ~ConsolePlayer() {;}
 
+<<<<<<< HEAD
     int            args  (int argc, const char *argv[]);
     bool           open  (void);
     void           close (void);
     bool           play  (void);
     void           stop  (void);
     player_state_t state (void) { return m_state; }
+=======
+    int            args    (int argc, const char *argv[]);
+    bool           open    (void);
+    void           close   (void);
+    bool           play    (void);
+    void           stop    (void);
+    player_state_t state   (void) { return m_state; }
+    int_least8_t   verbose (void) { return m_verboseLevel; }
+>>>>>>> sourceforge-trunk-fix
 };
 
 #endif // _player_h_

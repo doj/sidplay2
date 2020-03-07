@@ -1,7 +1,10 @@
+<<<<<<< HEAD
 /* c-basic-offset: 4; tab-width: 8; indent-tabs-mode: nil
  * vi: set shiftwidth=4 tabstop=8 expandtab:
  * :indentSize=4:tabSize=8:noTabs=true:
  */
+=======
+>>>>>>> sourceforge-trunk-fix
 /***************************************************************************
                           AudioBase.h  -  description
                              -------------------
@@ -19,7 +22,11 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: AudioBase.h,v $
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.4  2001/11/16 19:34:29  s_a_white
  *  Added extension to be used for file audio devices.
  *
@@ -37,16 +44,24 @@
  *
  ***************************************************************************/
 
+<<<<<<< HEAD
 #pragma once
 
 #include <stdlib.h>
 #include <string>
+=======
+#ifndef _AudioBase_h_
+#define _AudioBase_h_
+
+#include <string.h>
+>>>>>>> sourceforge-trunk-fix
 #include "AudioConfig.h"
 
 class AudioBase
 {
 protected:
     AudioConfig _settings;
+<<<<<<< HEAD
     std::string _errorString;
     void       *_sampleBuffer;
   const bool _debug;
@@ -59,6 +74,18 @@ public:
   {
   }
     virtual ~AudioBase () {}
+=======
+    const char *_errorString;
+    void       *_sampleBuffer;
+
+public:
+    AudioBase ()
+    {
+        _errorString  = "None";
+        _sampleBuffer = NULL;
+    }
+    virtual ~AudioBase () {;}
+>>>>>>> sourceforge-trunk-fix
 
     // All drivers must support these
     virtual void *open  (AudioConfig &cfg, const char *name) = 0;
@@ -76,9 +103,20 @@ public:
     {
         cfg = _settings;
     }
+<<<<<<< HEAD
 
     const char* getErrorString () const
     {
       return _errorString.c_str();
     }
 };
+=======
+    
+    const char *getErrorString () const
+    {
+        return _errorString;
+    }
+};
+
+#endif // _AudioBase_h_
+>>>>>>> sourceforge-trunk-fix

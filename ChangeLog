@@ -1,6 +1,14 @@
 Release Notes 2.0.10:
 
+<<<<<<< HEAD
 fix Linux ALSA
+=======
+The -q switch is depreciated.  Use -v with a negative number instead
+(-q1 is equivalent to -v-1).
+
+Support for new ALSA interface and COM style builder classes.
+
+>>>>>>> sourceforge-trunk-fix
 
 Release Notes 2.0.9:
 

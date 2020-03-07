@@ -3,7 +3,10 @@
 /* Define supported audio driver */
 #undef HAVE_HARDSID
 #undef HAVE_ALSA
+<<<<<<< HEAD
 #undef HAVE_QNX_ALSA
+=======
+>>>>>>> sourceforge-trunk-fix
 #undef HAVE_IRIX
 #undef HAVE_HPUX
 #undef HAVE_MMSYSTEM
@@ -22,8 +25,13 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
+<<<<<<< HEAD
 /* debug build */
 #undef DEBUG
+=======
+/* Define to 1 if you have the <alsa/asoundlib.h> header file. */
+#undef HAVE_ALSA_ASOUNDLIB_H
+>>>>>>> sourceforge-trunk-fix
 
 /* Define to 1 if you have the <audio.h> header file. */
 #undef HAVE_AUDIO_H
@@ -40,6 +48,15 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+<<<<<<< HEAD
+=======
+/* Define if standard member ``ios::binary'' is called ``ios::bin''. */
+#undef HAVE_IOS_BIN
+
+/* Define if ``ios::openmode'' is supported. */
+#undef HAVE_IOS_OPENMODE
+
+>>>>>>> sourceforge-trunk-fix
 /* Define to 1 if you have the <linux/soundcard.h> header file. */
 #undef HAVE_LINUX_SOUNDCARD_H
 
@@ -49,6 +66,12 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
+<<<<<<< HEAD
+=======
+/* Define to 1 for COM libsidplay2 interface */
+#undef HAVE_SID2_COM
+
+>>>>>>> sourceforge-trunk-fix
 /* Define to 1 if you have the <soundcard.h> header file. */
 #undef HAVE_SOUNDCARD_H
 
@@ -70,6 +93,12 @@
 /* Define to 1 if you have the <sun/dbriio.h> header file. */
 #undef HAVE_SUN_DBRIIO_H
 
+<<<<<<< HEAD
+=======
+/* Define to 1 if you have the <sys/asoundlib.h> header file. */
+#undef HAVE_SYS_ASOUNDLIB_H
+
+>>>>>>> sourceforge-trunk-fix
 /* Define to 1 if you have the <sys/audioio.h> header file. */
 #undef HAVE_SYS_AUDIOIO_H
 

@@ -17,10 +17,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: WavFileDefs.h,v $
  *  Revision 1.2  2001/11/22 08:45:38  s_a_white
  *  Added support for WAV_HAVE_IOS_OPENMODE
  *
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.1  2001/01/08 16:41:43  s_a_white
  *  App and Library Seperation
  *
@@ -29,7 +33,13 @@
  *
  ***************************************************************************/
 
+<<<<<<< HEAD
 #pragma once
+=======
+#ifndef WAV_FILE_DEFS_H
+#define WAV_FILE_DEFS_H
+
+>>>>>>> sourceforge-trunk-fix
 #include "config.h"
 
 #undef WAV_WORDS_BIGENDIAN
@@ -37,6 +47,14 @@
   #define WAV_WORDS_BIGENDIAN
 #endif
 
+<<<<<<< HEAD
+=======
+#undef HAVE_IOS_BIN
+#if defined(HAVE_IOS_BIN)
+  #define WAV_HAVE_IOS_BIN
+#endif
+
+>>>>>>> sourceforge-trunk-fix
 #undef WAV_HAVE_EXCEPTIONS
 #ifdef HAVE_EXCEPTIONS
   #define WAV_HAVE_EXCEPTIONS
@@ -47,6 +65,19 @@
   #define HAVE_BAD_COMPILER
 #endif
 
+<<<<<<< HEAD
 /* Whether to revert any changes applied to the endian-ess of the
    non-const sample buffer contents after they have been written. */
 #undef WAV_REVERT_BUFFER_CHANGES
+=======
+#undef WAV_HAVE_IOS_OPENMODE
+#ifdef HAVE_IOS_OPENMODE
+  #define WAV_HAVE_IOS_OPENMODE
+#endif
+
+/* Whether to revert any changes applied to the endian-ess of the
+   non-const sample buffer contents after they have been written. */
+#undef WAV_REVERT_BUFFER_CHANGES
+
+#endif /* WAV_FILE_DEFS_H */
+>>>>>>> sourceforge-trunk-fix

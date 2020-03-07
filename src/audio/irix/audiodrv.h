@@ -2,11 +2,15 @@
 // SGI/Irix specific audio interface.
 // --------------------------------------------------------------------------
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: audiodrv.h,v $
  *  Revision 1.6  2004/05/24 20:30:02  s_a_white
  *  Integrate IRIX patch submitted by Marcus Herbert (Jan 2003) which was
  *  forgotten about and only recently stumbled upon.
  *
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.5  2002/01/10 19:04:01  s_a_white
  *  Interface changes for audio drivers.
  *

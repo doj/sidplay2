@@ -15,7 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: IniConfig.h,v $
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.5  2001/07/03 17:49:27  s_a_white
  *  External filter no longer supported.  This filter is needed internally by the
  *  library.

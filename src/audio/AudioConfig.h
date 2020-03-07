@@ -15,7 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: AudioConfig.h,v $
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.3  2002/01/10 22:03:27  s_a_white
  *  Namespace not used yet (enable later).
  *
@@ -67,6 +71,18 @@ public:
         encoding  = AUDIO_UNSIGNED_PCM;
         bufSize   = 0;
     }
+<<<<<<< HEAD
+=======
+
+    const bool operator==(const AudioConfig& a) const
+    {
+        return frequency == a.frequency
+            && precision == a.precision
+            && channels  == a.channels
+            && encoding  == a.encoding
+            && bufSize   == a.bufSize;
+    }
+>>>>>>> sourceforge-trunk-fix
 };
 
 #endif  // _AudioConfig_h_

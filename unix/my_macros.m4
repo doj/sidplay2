@@ -43,6 +43,86 @@ AC_DEFUN([MY_SUBST],
 ])
 
 
+<<<<<<< HEAD
+=======
+
+
+
+dnl -------------------------------------------------------------------------
+dnl Check whether compiler has a working ``bool'' type.
+dnl Will substitute @HAVE_BOOL@ with either a def or undef line.
+dnl -------------------------------------------------------------------------
+
+AC_DEFUN([MY_CHECK_BOOL],
+[
+    AC_MSG_CHECKING([for bool])
+    AC_CACHE_VAL(test_cv_have_bool,
+    [
+        AC_TRY_COMPILE(
+            [],
+            [bool aBool = true;],
+            [test_cv_have_bool=yes],
+            [test_cv_have_bool=no]
+        )
+    ])
+    AC_MSG_RESULT($test_cv_have_bool)
+    if test "$test_cv_have_bool" = yes; then
+        AC_DEFINE(HAVE_BOOL,,[Define if the C++ compiler supports BOOL])
+    fi
+])
+
+dnl -------------------------------------------------------------------------
+dnl Check whether C++ library has member ios::bin instead of ios::binary.
+dnl Will substitute @HAVE_IOS_BIN@ with either a def or undef line.
+dnl -------------------------------------------------------------------------
+
+AC_DEFUN([MY_CHECK_IOS_BIN],
+[
+    AC_MSG_CHECKING([whether standard member ios::binary is available])
+    AC_CACHE_VAL(test_cv_have_ios_binary,
+    [
+        AC_TRY_COMPILE(
+            [#include <fstream>],
+            [std::ifstream myTest(0,std::ios::in|std::ios::binary);],
+            [test_cv_have_ios_binary=yes],
+            [test_cv_have_ios_binary=no]
+        )
+    ])
+    AC_MSG_RESULT($test_cv_have_ios_binary)
+    if test "$test_cv_have_ios_binary" = no; then
+        AC_DEFINE(HAVE_IOS_BIN,,
+            [Define if standard member ``ios::binary'' is called ``ios::bin''.]
+        )
+    fi
+])
+
+dnl -------------------------------------------------------------------------
+dnl Check whether C++ library has member ios::bin instead of ios::binary.
+dnl Will substitute @HAVE_IOS_OPENMODE@ with either a def or undef line.
+dnl -------------------------------------------------------------------------
+
+AC_DEFUN([MY_CHECK_IOS_OPENMODE],
+[
+    AC_MSG_CHECKING([whether standard member ios::openmode is available])
+    AC_CACHE_VAL(test_cv_have_ios_openmode,
+    [
+        AC_TRY_COMPILE(
+            [#include <fstream>
+             #include <iomanip>],
+            [std::ios::openmode myTest = std::ios::in;],
+            [test_cv_have_ios_openmode=yes],
+            [test_cv_have_ios_openmode=no]
+        )
+    ])
+    AC_MSG_RESULT($test_cv_have_ios_openmode)
+    if test "$test_cv_have_ios_openmode" = yes; then
+        AC_DEFINE(HAVE_IOS_OPENMODE,,
+            [Define if ``ios::openmode'' is supported.]
+        )
+    fi
+])
+
+>>>>>>> sourceforge-trunk-fix
 dnl -------------------------------------------------------------------------
 dnl Check whether C++ environment provides the "nothrow allocator".
 dnl Will substitute @HAVE_EXCEPTIONS@ if test code compiles.
@@ -54,8 +134,13 @@ AC_DEFUN([MY_CHECK_EXCEPTIONS],
     AC_CACHE_VAL(test_cv_have_exceptions,
     [
         AC_TRY_COMPILE(
+<<<<<<< HEAD
             [#include <new.h>],
             [char* buf = new(nothrow) char[1024];],
+=======
+            [#include <new>],
+            [char* buf = std::new(nothrow) char[1024];],
+>>>>>>> sourceforge-trunk-fix
             [test_cv_have_exceptions=yes],
             [test_cv_have_exceptions=no]
         )
@@ -80,9 +165,17 @@ AC_DEFUN([MY_TRY_COMPILE],
 [
     my_save_cxxflags=$CXXFLAGS
     my_save_ldflags=$LDFLAGS
+<<<<<<< HEAD
 
     CXXFLAGS="$CXXFLAGS $1"
     LDFLAGS="$LDFLAGS $2"
+=======
+    my_save_cxx=$CXX
+
+    CXXFLAGS="$CXXFLAGS $1"
+    LDFLAGS="$LDFLAGS $2"
+    CXX="libtool --mode=link --tag=CXX $CXX"
+>>>>>>> sourceforge-trunk-fix
 
     AC_TRY_LINK(
         [#include <$3>],
@@ -93,6 +186,10 @@ AC_DEFUN([MY_TRY_COMPILE],
 
     CXXFLAGS=$my_save_cxxflags
     LDFLAGS=$my_save_ldflags
+<<<<<<< HEAD
+=======
+    CXX=$my_save_cxx
+>>>>>>> sourceforge-trunk-fix
 ])
 
 

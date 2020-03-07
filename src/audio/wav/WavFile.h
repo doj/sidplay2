@@ -1,7 +1,11 @@
 /*
  * A basic WAV output file type - Interface.
  * Initial implementation by Michael Schwendt <mschwendt@yahoo.com>
+<<<<<<< HEAD
  *
+=======
+ * 
+>>>>>>> sourceforge-trunk-fix
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -17,10 +21,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: WavFile.h,v $
  *  Revision 1.6  2004/02/26 18:19:52  s_a_white
  *  Updates for VC7 (use real libstdc++ headers instead of draft ones).
  *
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.5  2002/01/10 18:57:00  s_a_white
  *  Interface changes and fixes for bigendian machines.
  *
@@ -41,7 +49,12 @@
  *
  ***************************************************************************/
 
+<<<<<<< HEAD
 #pragma once
+=======
+#ifndef WAV_FILE_HEADER_H
+#define WAV_FILE_HEADER_H
+>>>>>>> sourceforge-trunk-fix
 
 #include <iostream>
 #include <iomanip>
@@ -64,7 +77,11 @@ struct wavHeader                        // little endian format
     unsigned char bytesPerSec[4];        // sampleFreq * blockAlign
     unsigned char blockAlign[2];        // bytes per sample * channels
     unsigned char bitsPerSample[2];
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> sourceforge-trunk-fix
     char dataChunkID[4];                // keyword, begin of data chunk; = 'data' (ASCII)
 
     unsigned char dataChunkLen[4];        // length of data
@@ -78,14 +95,22 @@ private:
     static const wavHeader defaultWavHdr;
     wavHeader wavHdr;
 
+<<<<<<< HEAD
     std::ofstream file;
+=======
+    std::fstream file;
+>>>>>>> sourceforge-trunk-fix
     bool isOpen;         // whether file has been opened
     bool headerWritten;  // whether final header has been written
 
 public:
 
     WavFile();
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> sourceforge-trunk-fix
     // Only unsigned 8-bit, and signed 16-bit, samples are supported.
     // Endian-ess is adjusted if necessary.
     //
@@ -96,6 +121,7 @@ public:
     { return open (cfg, name, true); }
     void *open(AudioConfig &cfg, const char *name,
                const bool overWrite);
+<<<<<<< HEAD
 
     // After write call old buffer is invalid and you should
     // use the new buffer provided instead.
@@ -107,6 +133,19 @@ public:
 
     // Rev 1.3 (saw) - Changed, see AudioBase.h
     void* reset () override
+=======
+    
+    // After write call old buffer is invalid and you should
+    // use the new buffer provided instead.
+    void *write();
+    void  close();
+    void  pause() {;}
+    const char *extension () const { return ".wav"; }
+    ~WavFile() { close(); }
+    
+    // Rev 1.3 (saw) - Changed, see AudioBase.h
+    void *reset ()
+>>>>>>> sourceforge-trunk-fix
     {
         if (isOpen)
             return _sampleBuffer;
@@ -120,3 +159,8 @@ public:
     operator bool()  const { return (file.good() != 0); }
     bool operator!() const { return (file.fail() != 0); }
 };
+<<<<<<< HEAD
+=======
+
+#endif /* WAVE_FILE_HEADER_H */
+>>>>>>> sourceforge-trunk-fix

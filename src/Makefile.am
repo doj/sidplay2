@@ -9,6 +9,7 @@ sidplay2_SOURCES = IniConfig.cpp IniConfig.h \
 args.cpp keyboard.cpp keyboard.h main.cpp menu.cpp \
 player.cpp player.h
 
+<<<<<<< HEAD
 sidplay2_LDADD = ./audio/null/libnull.a ./audio/wav/libwav.a \
 $(AUDIO_DRV) $(AUDIO_LDFLAGS) \
 $(LIBSIDPLAY2_LDFLAGS) $(LIBSIDUTILS_LDFLAGS) \
@@ -18,3 +19,14 @@ $(BUILDERS_LDFLAGS)
 DEFAULT_INCLUDES=
 
 AM_CFLAGS = $(DEBUG_CFLAGS)
+=======
+sidplay2_LDADD = ./audio/null/libnull.a \
+./audio/wav/libwav.a ./audio/raw/libraw.a \
+$(AUDIO_DRV) $(AUDIO_LDFLAGS) \
+$(LIBSIDPLAY2_LDFLAGS) $(LIBSIDUTILS_LDFLAGS) \
+$(BUILDERS_LDFLAGS)
+# $(LIBLTDL_LDFLAGS)
+
+# Remove bad default includes
+DEFAULT_INCLUDES=
+>>>>>>> sourceforge-trunk-fix

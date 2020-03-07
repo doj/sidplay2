@@ -15,7 +15,61 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: player.cpp,v $
+=======
+ *  $Log: not supported by cvs2svn $
+ *  Revision 1.47  2007/01/27 11:37:33  s_a_white
+ *  Improve backwards compatibility
+ *
+ *  Revision 1.46  2007/01/27 11:16:17  s_a_white
+ *  Unfortunate confusion between SidBuilder and SidEmulation in cfg variable.  We
+ *  are passing in a builder not emulation, so update the queried interface.
+ *
+ *  Revision 1.45  2007/01/27 10:20:49  s_a_white
+ *  Updated to use better COM emulation interface.
+ *
+ *  Revision 1.44  2006/10/31 19:52:00  s_a_white
+ *  Auto type on if_cast didn't work with ifPtr (made copy).  We cannot pass by
+ *  reference, so pass the internal pointer.
+ *
+ *  Revision 1.43  2006/10/30 19:32:06  s_a_white
+ *  Switch sidplay2 class to iinterface.
+ *
+ *  Revision 1.42  2006/10/28 10:14:15  s_a_white
+ *  Convert one last missed case
+ *
+ *  Revision 1.41  2006/10/28 10:12:18  s_a_white
+ *  Update to new COM style interface.
+ *
+ *  Revision 1.40  2006/10/20 17:31:33  s_a_white
+ *  Code now source backwards compatible with old sidplay libs
+ *
+ *  Revision 1.39  2006/10/20 16:27:12  s_a_white
+ *  Begin improving compatibility with old libraries
+ *
+ *  Revision 1.38  2006/10/16 21:50:45  s_a_white
+ *  Merge verbose and quiet levels.
+ *
+ *  Revision 1.37  2006/07/07 18:44:09  s_a_white
+ *  Display keys for non soundcard output sources.
+ *
+ *  Revision 1.36  2006/06/28 07:42:00  s_a_white
+ *  Switch builders use to COM object use.
+ *
+ *  Revision 1.35  2005/11/30 22:49:48  s_a_white
+ *  Add raw output support (--raw=<file>)
+ *
+ *  Revision 1.34  2005/06/10 18:40:16  s_a_white
+ *  Mingw support.
+ *
+ *  Revision 1.33  2004/11/12 20:20:21  s_a_white
+ *  Remove some unnecessary duplicate code.
+ *
+ *  Revision 1.32  2004/06/26 15:46:47  s_a_white
+ *  Changes to support new calling convention for event scheduler.
+ *
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.31  2004/02/26 18:19:22  s_a_white
  *  Updates for VC7 (use real libstdc++ headers instead of draft ones).
  *
@@ -131,6 +185,10 @@ using std::endl;
 // Previous song select timeout (3 secs)
 #define SID2_PREV_SONG_TIMEOUT 4
 
+<<<<<<< HEAD
+=======
+// Depreciated
+>>>>>>> sourceforge-trunk-fix
 #ifdef HAVE_RESID_BUILDER
 #   include <sidplay/builders/resid.h>
 const char ConsolePlayer::RESID_ID[]   = "ReSID";
@@ -141,14 +199,32 @@ const char ConsolePlayer::HARDSID_ID[] = "HardSID";
 #endif
 
 
+<<<<<<< HEAD
 ConsolePlayer::ConsolePlayer (const char * const name)
 :Event("External Timer\n"),
  m_name(name),
+=======
+
+ConsolePlayer::ConsolePlayer (const char * const name)
+:Event("External Timer\n"),
+ m_name(name),
+#ifdef HAVE_SID2_COM
+ m_engine(sidplay2::create ()),
+ m_engineTimer(m_engine),
+#else
+ m_engine(&m_theEngine),
+ m_engineTimer(m_engine),
+ m_sidBuilder(0),
+#endif
+>>>>>>> sourceforge-trunk-fix
  m_tune(0),
  m_state(playerStopped),
  m_outfile(NULL),
  m_context(NULL),
+<<<<<<< HEAD
  m_quietLevel(0),
+=======
+>>>>>>> sourceforge-trunk-fix
  m_verboseLevel(0),
  m_crc(0),
  m_cpudebug(false)
@@ -168,13 +244,18 @@ ConsolePlayer::ConsolePlayer (const char * const name)
 
     // Read default configuration
     m_iniCfg.read ();
+<<<<<<< HEAD
     m_engCfg = m_engine.config ();
+=======
+    m_engCfg = m_engine->config ();
+>>>>>>> sourceforge-trunk-fix
 
     {   // Load ini settings
         IniConfig::audio_section     audio     = m_iniCfg.audio();
         IniConfig::emulation_section emulation = m_iniCfg.emulation();
 
         // INI Configuration Settings
+<<<<<<< HEAD
         m_engCfg.clockForced  = emulation.clockForced;
         m_engCfg.clockSpeed   = emulation.clockSpeed;
         m_engCfg.clockDefault = SID2_CLOCK_PAL;
@@ -195,6 +276,21 @@ ConsolePlayer::ConsolePlayer (const char * const name)
     m_driver.cfg.frequency = m_engCfg.frequency;
     m_driver.cfg.precision = m_engCfg.precision;
 
+=======
+        m_engCfg.clockForced    = emulation.clockForced;
+        m_engCfg.clockSpeed     = emulation.clockSpeed;
+        m_engCfg.clockDefault   = SID2_CLOCK_PAL;
+        m_engCfg.frequency      = audio.frequency;
+        m_engCfg.optimisation   = emulation.optimiseLevel;
+        m_engCfg.playback       = audio.playback;
+        m_engCfg.precision      = audio.precision;
+        m_engCfg.sidModel       = emulation.sidModel;
+        m_engCfg.sidDefault     = SID2_MOS6581;
+        m_engCfg.sidSamples     = emulation.sidSamples;
+        m_filter.enabled        = emulation.filter;
+    }
+
+>>>>>>> sourceforge-trunk-fix
     createOutput (OUT_NULL, NULL);
     createSidEmu (EMU_NONE);
 }
@@ -213,7 +309,11 @@ bool ConsolePlayer::createOutput (OUTPUTS driver, const SidTuneInfo *tuneInfo)
     {
         if (m_driver.device != &m_driver.null)
             delete m_driver.device;
+<<<<<<< HEAD
         m_driver.device = NULL;         
+=======
+        m_driver.device = NULL;
+>>>>>>> sourceforge-trunk-fix
     }
 
     // Create audio driver
@@ -225,7 +325,13 @@ bool ConsolePlayer::createOutput (OUTPUTS driver, const SidTuneInfo *tuneInfo)
     break;
 
     case OUT_SOUNDCARD:
+<<<<<<< HEAD
 #ifdef HAVE_EXCEPTIONS
+=======
+#ifdef HAVE_WAV_ONLY
+        m_driver.device = NULL;
+#elif defined(HAVE_EXCEPTIONS)
+>>>>>>> sourceforge-trunk-fix
         m_driver.device = new(std::nothrow) AudioDriver;
 #else
         m_driver.device = new AudioDriver;
@@ -240,6 +346,17 @@ bool ConsolePlayer::createOutput (OUTPUTS driver, const SidTuneInfo *tuneInfo)
 #endif
     break;
 
+<<<<<<< HEAD
+=======
+    case OUT_RAW:
+#ifdef HAVE_EXCEPTIONS
+        m_driver.device = new(std::nothrow) RawFile;
+#else
+        m_driver.device = new RawFile;
+#endif
+    break;
+
+>>>>>>> sourceforge-trunk-fix
     default:
         break;
     }
@@ -265,7 +382,11 @@ bool ConsolePlayer::createOutput (OUTPUTS driver, const SidTuneInfo *tuneInfo)
                 break;
         }
         if (!i) i = length;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> sourceforge-trunk-fix
 #ifdef HAVE_EXCEPTIONS
         name = new(std::nothrow) char[i + 10];
 #else
@@ -337,6 +458,7 @@ bool ConsolePlayer::createOutput (OUTPUTS driver, const SidTuneInfo *tuneInfo)
 // Create the sid emulation
 bool ConsolePlayer::createSidEmu (SIDEMUS emu)
 {
+<<<<<<< HEAD
     // Remove old driver and emulation
     if (m_engCfg.sidEmulation)
     {
@@ -344,6 +466,16 @@ bool ConsolePlayer::createSidEmu (SIDEMUS emu)
         m_engCfg.sidEmulation = NULL;
         m_engine.config (m_engCfg);
         delete builder;
+=======
+    if (m_sidBuilder)
+    {   // Remove old driver and emulation
+        m_engCfg.sidEmulation = 0;
+        m_engine->config (m_engCfg);
+#ifndef HAVE_SID2_COM // Depreciared interface
+        delete m_sidBuilder;
+#endif
+        m_sidBuilder = 0;
+>>>>>>> sourceforge-trunk-fix
     }
 
     // Now setup the sid emulation
@@ -352,6 +484,7 @@ bool ConsolePlayer::createSidEmu (SIDEMUS emu)
 #ifdef HAVE_RESID_BUILDER
     case EMU_RESID:
     {
+<<<<<<< HEAD
 #ifdef HAVE_EXCEPTIONS
         ReSIDBuilder *rs = new(std::nothrow) ReSIDBuilder( RESID_ID );
 #else
@@ -373,6 +506,38 @@ bool ConsolePlayer::createSidEmu (SIDEMUS emu)
             {   // Setup filter
                 rs->filter (m_filter.definition.provide ());
                 if (!*rs) goto createSidEmu_error;
+=======
+#ifdef HAVE_SID2_COM
+        m_sidBuilder = ReSIDBuilderCreate ("");
+        SidLazyIPtr<IReSIDBuilder> rs(m_sidBuilder);
+        if (rs)
+        {
+            m_engCfg.sidEmulation = rs->iunknown ();
+#else // Depreciated interface
+#   ifdef HAVE_EXCEPTIONS
+        ReSIDBuilder *rs = new(std::nothrow) ReSIDBuilder( RESID_ID );
+#   else
+        ReSIDBuilder *rs = new ReSIDBuilder( RESID_ID );
+#   endif
+        m_sidBuilder = rs;
+        if (rs)
+        {
+            m_engCfg.sidEmulation = rs;
+#endif // HAVE_SID2_COM
+            if (!(*rs)) goto createSidEmu_error;
+
+            // Setup the emulation
+            rs->create ((m_engine->info ()).maxsids);
+            if (!(*rs)) goto createSidEmu_error;
+            rs->filter (m_filter.enabled);
+            if (!(*rs)) goto createSidEmu_error;
+            rs->sampling (m_driver.cfg.frequency);
+            if (!(*rs)) goto createSidEmu_error;
+            if (m_filter.enabled && m_filter.definition)
+            {   // Setup filter
+                rs->filter (m_filter.definition.provide ());
+                if (!(*rs)) goto createSidEmu_error;
+>>>>>>> sourceforge-trunk-fix
             }
         }
         break;
@@ -382,6 +547,7 @@ bool ConsolePlayer::createSidEmu (SIDEMUS emu)
 #ifdef HAVE_HARDSID_BUILDER
     case EMU_HARDSID:
     {
+<<<<<<< HEAD
 #ifdef HAVE_EXCEPTIONS
         HardSIDBuilder *hs = new(std::nothrow) HardSIDBuilder( HARDSID_ID );
 #else
@@ -397,6 +563,32 @@ bool ConsolePlayer::createSidEmu (SIDEMUS emu)
             if (!*hs) goto createSidEmu_error;
             hs->filter (m_filter.enabled);
             if (!*hs) goto createSidEmu_error;
+=======
+#ifdef HAVE_SID2_COM
+        m_sidBuilder = HardSIDBuilderCreate ("");
+        SidLazyIPtr<IHardSIDBuilder> hs(m_sidBuilder);
+        if (hs)
+        {
+            m_engCfg.sidEmulation = hs->iunknown ();
+#else // Depreciated interface
+#   ifdef HAVE_EXCEPTIONS
+        HardSIDBuilder *hs = new(std::nothrow) HardSIDBuilder( HARDSID_ID );
+#   else
+        HardSIDBuilder *hs = new HardSIDBuilder( HARDSID_ID );
+#   endif
+        m_sidBuilder = hs;
+        if (hs)
+        {
+            m_engCfg.sidEmulation = hs;
+#endif // HAVE_SID2_COM
+            if (!(*hs)) goto createSidEmu_error;
+
+            // Setup the emulation
+            hs->create ((m_engine->info ()).maxsids);
+            if (!(*hs)) goto createSidEmu_error;
+            hs->filter (m_filter.enabled);
+            if (!(*hs)) goto createSidEmu_error;
+>>>>>>> sourceforge-trunk-fix
         }
         break;
     }
@@ -409,7 +601,11 @@ bool ConsolePlayer::createSidEmu (SIDEMUS emu)
         break;
     }
 
+<<<<<<< HEAD
     if (!m_engCfg.sidEmulation)
+=======
+    if (!m_sidBuilder)
+>>>>>>> sourceforge-trunk-fix
     {
         if (emu > EMU_DEFAULT)
         {   // No sid emulation?
@@ -420,9 +616,19 @@ bool ConsolePlayer::createSidEmu (SIDEMUS emu)
     return true;
 
 createSidEmu_error:
+<<<<<<< HEAD
     displayError (m_engCfg.sidEmulation->error ());
     delete m_engCfg.sidEmulation;
     m_engCfg.sidEmulation = NULL;
+=======
+#ifdef HAVE_SID2_COM
+    displayError (SidIPtr<ISidBuilder>(m_sidBuilder)->error ());
+#else // Depreciated Interface
+    displayError (m_sidBuilder->error ());
+    delete m_engCfg.sidEmulation;
+#endif
+    m_engCfg.sidEmulation = 0;
+>>>>>>> sourceforge-trunk-fix
     return false;
 }
 
@@ -433,23 +639,40 @@ bool ConsolePlayer::open (void)
 
     if ((m_state & ~playerFast) == playerRestart)
     {
+<<<<<<< HEAD
         if (m_quietLevel < 2)
+=======
+        if (m_verboseLevel > -2)
+>>>>>>> sourceforge-trunk-fix
             cerr << endl;
         if (m_state & playerFast)
             m_driver.selected->reset ();
         m_state = playerStopped;
     }
+<<<<<<< HEAD
     
     // Select the required song
     m_track.selected = m_tune.selectSong (m_track.selected);
     if (m_engine.load (&m_tune) < 0)
     {
         displayError (m_engine.error ());
+=======
+
+    // Select the required song
+    m_track.selected = m_tune.selectSong (m_track.selected);
+    if (m_engine->load (&m_tune) < 0)
+    {
+        displayError (m_engine->error ());
+>>>>>>> sourceforge-trunk-fix
         return false;
     }
 
     // Get tune details
+<<<<<<< HEAD
     tuneInfo = (m_engine.info ()).tuneInfo;
+=======
+    tuneInfo = (m_engine->info ()).tuneInfo;
+>>>>>>> sourceforge-trunk-fix
     if (!m_track.single)
         m_track.songs = tuneInfo->songs;
     if (!createOutput (m_driver.output, tuneInfo))
@@ -458,9 +681,15 @@ bool ConsolePlayer::open (void)
         return false;
 
     // Configure engine with settings
+<<<<<<< HEAD
     if (m_engine.config (m_engCfg) < 0)
     {   // Config failed
         displayError (m_engine.error ());
+=======
+    if (m_engine->config (m_engCfg) < 0)
+    {   // Config failed
+        displayError (m_engine->error ());
+>>>>>>> sourceforge-trunk-fix
         return false;
     }
 
@@ -468,7 +697,11 @@ bool ConsolePlayer::open (void)
     // forwarding to the start position
     m_driver.selected = &m_driver.null;
     m_speed.current   = m_speed.max;
+<<<<<<< HEAD
     m_engine.fastForward (100 * m_speed.current);
+=======
+    m_engine->fastForward (100 * m_speed.current);
+>>>>>>> sourceforge-trunk-fix
 
     // As yet we don't have a required songlength
     // so try the songlength database
@@ -480,9 +713,14 @@ bool ConsolePlayer::open (void)
     }
 
     // Set up the play timer
+<<<<<<< HEAD
     m_context = (m_engine.info()).eventContext;
     m_timer.stop  = 0;
     m_timer.stop += m_timer.length;
+=======
+    m_context = (m_engine->info()).eventContext;
+    m_timer.stop = m_timer.length;
+>>>>>>> sourceforge-trunk-fix
 
     if (m_timer.valid)
     {   // Length relative to start
@@ -508,7 +746,11 @@ bool ConsolePlayer::open (void)
 
 void ConsolePlayer::close ()
 {
+<<<<<<< HEAD
     m_engine.stop   ();
+=======
+    m_engine->stop   ();
+>>>>>>> sourceforge-trunk-fix
     if (m_state == playerExit)
     {   // Natural finish
         emuflush ();
@@ -519,12 +761,21 @@ void ConsolePlayer::close ()
         m_driver.selected->reset ();
 
     // Shutdown drivers, etc
+<<<<<<< HEAD
     createOutput    (OUT_NULL, NULL);
     createSidEmu    (EMU_NONE);
     m_engine.load   (NULL);
     m_engine.config (m_engCfg);
 
     if (m_quietLevel < 2)
+=======
+    createOutput     (OUT_NULL, NULL);
+    createSidEmu     (EMU_NONE);
+    m_engine->load   (NULL);
+    m_engine->config (m_engCfg);
+
+    if (m_verboseLevel > -2)
+>>>>>>> sourceforge-trunk-fix
     {   // Correctly leave ansi mode and get prompt to
         // end up in a suitable location
         if ((m_iniCfg.console ()).ansi)
@@ -537,6 +788,7 @@ void ConsolePlayer::close ()
 
 // Flush any hardware sid fifos so all music is played
 void ConsolePlayer::emuflush ()
+<<<<<<< HEAD
 {
     switch (m_driver.sid)
     {
@@ -548,6 +800,28 @@ void ConsolePlayer::emuflush ()
     default:
         break;
     }
+=======
+{   // Eventually need an interface to flush all hardware
+    // seperate to a specific interface
+#ifdef HSID_SID2_COM
+#   ifdef HAVE_HARDSID_BUILDER
+    SidIPtr<HardSIDBuilder> hs(m_engCfg.sidEmulation);
+    if (hs)
+        hs->flush ();
+#   endif // HAVE_HARDSID_BUILDER
+#else // Depreciated Interface
+    switch (m_driver.sid)
+    {
+#   ifdef HAVE_HARDSID_BUILDER
+    case EMU_HARDSID:
+        ((HardSIDBuilder *)m_engCfg.sidEmulation)->flush ();
+        break;
+#   endif // HAVE_HARDSID_BUILDER
+    default:
+        break;
+    }
+#endif // HSID_SID2_COM
+>>>>>>> sourceforge-trunk-fix
 }
 
 
@@ -555,6 +829,7 @@ void ConsolePlayer::emuflush ()
 bool ConsolePlayer::play ()
 {
     void *buffer = m_driver.selected->buffer ();
+<<<<<<< HEAD
     if (! buffer)
       {
 	return false;
@@ -564,15 +839,25 @@ bool ConsolePlayer::play ()
       {
 	return false;
       }
+=======
+    uint_least32_t length = m_driver.cfg.bufSize;
+>>>>>>> sourceforge-trunk-fix
 
     if (m_state == playerRunning)
     {
         // Fill buffer
         uint_least32_t ret;
+<<<<<<< HEAD
         ret = m_engine.play (buffer, length);
         if (ret < length)
         {
             if (m_engine.state () != sid2_stopped)
+=======
+        ret = m_engine->play (buffer, length);
+        if (ret < length)
+        {
+            if (m_engine->state () != sid2_stopped)
+>>>>>>> sourceforge-trunk-fix
             {
                 m_state = playerError;
                 return false;
@@ -590,6 +875,7 @@ bool ConsolePlayer::play ()
         // Check for a keypress (approx 250ms rate, but really depends
         // on music buffer sizes).  Don't do this for high quiet levels
         // as chances are we are under remote control.
+<<<<<<< HEAD
         if ((m_quietLevel < 2) && _kbhit ())
             decodeKeys ();
         return true;
@@ -614,6 +900,27 @@ bool ConsolePlayer::play ()
 #elif HAVE_TSID == 2
         if (m_tsid)
         {
+=======
+        if ((m_verboseLevel > -2) && _kbhit ())
+            decodeKeys ();
+        return true;
+    default:
+        if (m_verboseLevel > -2)
+            cerr << endl;
+        if (m_crc)
+        {
+            const SidTuneInfo *tuneInfo = (m_engine->info ()).tuneInfo;
+            cout << std::setw(8) << std::setfill('0') << std::hex
+                 << (m_engine->info ()).sid2crc << " : " << std::dec
+                 << m_filename << " - song " << tuneInfo->currentSong
+                 << "/" << tuneInfo->songs << endl;
+        }
+        m_engine->stop ();
+#if HAVE_TSID
+        if (m_tsid)
+        {
+#   if HAVE_TSID == 2
+>>>>>>> sourceforge-trunk-fix
             int_least32_t length;
             char md5[SIDTUNE_MD5_LENGTH + 1];
             m_tune.createMD5 (md5);
@@ -621,10 +928,21 @@ bool ConsolePlayer::play ()
             // ignore errors
             if (length < 0)
                 length = 0;
+<<<<<<< HEAD
             m_tsid.addTime (md5, m_filename, (uint) m_timer.current,
                             m_track.selected, (uint) length);
         }
 #endif
+=======
+#   endif
+            m_tsid.addTime ((uint) m_timer.current, m_track.selected, m_filename
+#   if HAVE_TSID == 2
+                           , md5, (uint) length
+#   endif
+                           );
+        }
+#endif // HAVE_TSID
+>>>>>>> sourceforge-trunk-fix
         break;
     }
     return false;
@@ -634,15 +952,24 @@ bool ConsolePlayer::play ()
 void ConsolePlayer::stop ()
 {
     m_state = playerStopped;
+<<<<<<< HEAD
     m_engine.stop ();
+=======
+    m_engine->stop ();
+>>>>>>> sourceforge-trunk-fix
 }
 
 
 // External Timer Event
 void ConsolePlayer::event (void)
 {
+<<<<<<< HEAD
     uint_least32_t seconds = m_engine.time() / m_engine.timebase();
     if ( !m_quietLevel )
+=======
+    uint_least32_t seconds = m_engineTimer->time() / m_engineTimer->timebase();
+    if (m_verboseLevel >= 0)
+>>>>>>> sourceforge-trunk-fix
     {
         cerr << "\b\b\b\b\b" << std::setw(2) << std::setfill('0')
              << ((seconds / 60) % 100) << ':' << std::setw(2)
@@ -654,7 +981,11 @@ void ConsolePlayer::event (void)
         m_timer.current = seconds;
 
         // Handle exiting on crc completion
+<<<<<<< HEAD
         if (m_crc && (m_crc == (m_engine.info ()).sid2crcCount))
+=======
+        if (m_crc && (m_crc == (m_engine->info ()).sid2crcCount))
+>>>>>>> sourceforge-trunk-fix
             m_timer.stop = seconds;
 
         if (seconds == m_timer.start)
@@ -662,9 +993,15 @@ void ConsolePlayer::event (void)
             m_driver.selected = m_driver.device;
             memset (m_driver.selected->buffer (), 0, m_driver.cfg.bufSize);
             m_speed.current = 1;
+<<<<<<< HEAD
             m_engine.fastForward (100);
             if (m_cpudebug)
                 m_engine.debug (true, NULL);
+=======
+            m_engine->fastForward (100);
+            if (m_cpudebug)
+                m_engine->debug (true, NULL);
+>>>>>>> sourceforge-trunk-fix
         }
         else if (m_timer.stop && (seconds == m_timer.stop))
         {
@@ -684,9 +1021,15 @@ void ConsolePlayer::event (void)
             }
             if (m_track.loop)
                 m_state = playerRestart;
+<<<<<<< HEAD
         }            
     }
     
+=======
+        }
+    }
+
+>>>>>>> sourceforge-trunk-fix
     // Units in C64 clock cycles
     m_context->schedule (this, 900000, EVENT_CLOCK_PHI1);
 }
@@ -703,6 +1046,13 @@ void ConsolePlayer::decodeKeys ()
 {
     int action;
 
+<<<<<<< HEAD
+=======
+    // All keys useless when saving to files
+    if (m_driver.output != OUT_SOUNDCARD)
+        return;
+
+>>>>>>> sourceforge-trunk-fix
     do
     {
         action = keyboard_decode ();
@@ -726,7 +1076,11 @@ void ConsolePlayer::decodeKeys ()
             if (!m_track.single)
             {   // Only select previous song if less than timeout
                 // else restart current song
+<<<<<<< HEAD
                 if ((m_engine.time() / m_engine.timebase()) < SID2_PREV_SONG_TIMEOUT)
+=======
+                if ((m_engineTimer->time() / m_engineTimer->timebase()) < SID2_PREV_SONG_TIMEOUT)
+>>>>>>> sourceforge-trunk-fix
                 {
                     m_track.selected--;
                     if (m_track.selected < 1)
@@ -739,12 +1093,20 @@ void ConsolePlayer::decodeKeys ()
             m_speed.current *= 2;
             if (m_speed.current > m_speed.max)
                 m_speed.current = m_speed.max;
+<<<<<<< HEAD
             m_engine.fastForward (100 * m_speed.current);
+=======
+            m_engine->fastForward (100 * m_speed.current);
+>>>>>>> sourceforge-trunk-fix
         break;
 
         case A_DOWN_ARROW:
             m_speed.current = 1;
+<<<<<<< HEAD
             m_engine.fastForward (100);
+=======
+            m_engine->fastForward (100);
+>>>>>>> sourceforge-trunk-fix
         break;
 
         case A_HOME:

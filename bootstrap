@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ "$1" = clean ] ; then
+    make mainter-clean
+    rm config.log Makefile config.status aclocal.m4 configure src/sidplay2 unix/config.h unix/sidplay2.spec unix/stamp-h1
+    rm -rf autom4te.cache/ src/.deps/
+    find . -name '*~' -delete
+    find . -name Makefile.in -delete
+    find . -name Makefile -delete
+    find . -type d -name .deps | xargs rm -r
+    exit
+fi
+
+set -e
+aclocal -I unix
+libtoolize --force --copy
+autoheader --force
+automake --force --add-missing --copy
+autoconf --force
+./configure
+make

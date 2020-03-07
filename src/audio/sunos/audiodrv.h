@@ -15,10 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: audiodrv.h,v $
  *  Revision 1.5  2002/01/10 19:04:01  s_a_white
  *  Interface changes for audio drivers.
  *
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.4  2001/10/30 23:35:35  s_a_white
  *  Added pause support.
  *

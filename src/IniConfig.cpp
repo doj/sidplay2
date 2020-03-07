@@ -15,7 +15,17 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: IniConfig.cpp,v $
+=======
+ *  $Log: not supported by cvs2svn $
+ *  Revision 1.14  2005/06/10 17:13:08  s_a_white
+ *  Initial support for MingW
+ *
+ *  Revision 1.13  2004/11/12 20:41:26  s_a_white
+ *  Fix 2 memory leaks reported by Valgrind
+ *
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.12  2004/02/26 18:17:27  s_a_white
  *  Use ini_readBool for boolean parameters rather than ini_readInt.
  *
@@ -59,7 +69,10 @@
 #include <sidplay/sidplay2.h>
 #include "config.h"
 #include "IniConfig.h"
+<<<<<<< HEAD
 #include <string>
+=======
+>>>>>>> sourceforge-trunk-fix
 
 #ifdef HAVE_UNIX
 #   include <sys/types.h>
@@ -386,6 +399,7 @@ bool IniConfig::readEmulation (ini_fd_t ini)
 
 void IniConfig::read ()
 {
+<<<<<<< HEAD
     ini_fd_t ini  = 0;
 
     std::string path;
@@ -419,6 +433,45 @@ void IniConfig::read ()
 
     // Opens an existing file or creates a new one
     ini = ini_open (path.c_str(), "w", ";");
+=======
+    const char *path = getenv ("HOME");
+    ini_fd_t    ini  = 0;
+    char       *configPath;
+    size_t      length;
+
+    if (!path)
+        path = getenv ("windir");
+
+    if (!path)
+        path = "";
+
+    length     = strlen (path) + strlen (DIR_NAME) + strlen (FILE_NAME) + 3;
+    configPath = (char *) malloc (length);
+    if (!configPath)
+        goto IniConfig_read_error;
+
+#if defined(HAVE_UNIX) && !defined(HAVE_MINGW)
+    sprintf (configPath, "%s/%s", path, DIR_NAME);
+    // Make sure the config path exists
+    mkdir   (configPath, 0700);
+    sprintf (configPath, "%s/%s", configPath, FILE_NAME);
+#else
+    sprintf (configPath, "%s/%s", path, FILE_NAME);
+#endif
+
+    {   // Format path from system
+        char *s = configPath;
+        while (*s != '\0')
+        {
+            if (*s == '\\')
+                *s = '/';
+            s++;
+        }
+    }
+
+    // Opens an existing file or creates a new one
+    ini = ini_open (configPath, "w", ";");
+>>>>>>> sourceforge-trunk-fix
 
     // Unable to open file?
     if (!ini)
@@ -432,12 +485,21 @@ void IniConfig::read ()
     status &= readAudio     (ini);
     status &= readEmulation (ini);
     ini_close (ini);
+<<<<<<< HEAD
+=======
+    free (configPath);
+>>>>>>> sourceforge-trunk-fix
 return;
 
 IniConfig_read_error:
     if (ini)
         ini_close (ini);
+<<<<<<< HEAD
     clear ();
+=======
+    if (configPath)
+        free (configPath);
+>>>>>>> sourceforge-trunk-fix
     status = false;
 }
 

@@ -15,7 +15,46 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: args.cpp,v $
+=======
+ *  $Log: not supported by cvs2svn $
+ *  Revision 1.29  2007/01/27 10:20:49  s_a_white
+ *  Updated to use better COM emulation interface.
+ *
+ *  Revision 1.28  2006/10/30 19:32:06  s_a_white
+ *  Switch sidplay2 class to iinterface.
+ *
+ *  Revision 1.27  2006/10/29 23:05:58  s_a_white
+ *  Add -q for compatibily (is marked depreciated, remove later).
+ *
+ *  Revision 1.26  2006/10/28 10:12:18  s_a_white
+ *  Update to new COM style interface.
+ *
+ *  Revision 1.25  2006/10/20 17:36:52  s_a_white
+ *  Source now source compatible with old sidplay-libs
+ *
+ *  Revision 1.24  2006/10/17 22:23:34  s_a_white
+ *  Add some support for print options (feature request #1109764)
+ *
+ *  Revision 1.23  2006/10/16 21:44:42  s_a_white
+ *  Merge verbose and quiet levels.  Prevent quiet level (verbose -2) accessing
+ *  the keyboard in anyway (for background operation).
+ *
+ *  Revision 1.22  2006/06/27 20:14:55  s_a_white
+ *  Switch to new COM style builder classes.
+ *
+ *  Revision 1.21  2005/12/02 19:25:30  s_a_white
+ *  Fix bug reported by Patrick Mauritz in patch 1282585 (modification of
+ *  constant string).
+ *
+ *  Revision 1.20  2005/11/30 22:49:48  s_a_white
+ *  Add raw output support (--raw=<file>)
+ *
+ *  Revision 1.19  2005/06/10 18:40:16  s_a_white
+ *  Mingw support.
+ *
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.18  2004/05/05 23:49:20  s_a_white
  *  Remove the hardsid option from the args list if not sid devices are available.
  *
@@ -75,9 +114,15 @@
  ***************************************************************************/
 
 #include <stdlib.h>
+<<<<<<< HEAD
 #include <string.h>
 #include <iostream>
 #include <string>
+=======
+#include <cstring>
+#include <iostream>
+#include <vector>
+>>>>>>> sourceforge-trunk-fix
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -94,6 +139,7 @@ using std::endl;
 
 
 // Convert time from integer
+<<<<<<< HEAD
 bool ConsolePlayer::parseTime (const char *str, uint_least32_t &time)
 {
     const char *sep;
@@ -122,6 +168,57 @@ bool ConsolePlayer::parseTime (const char *str, uint_least32_t &time)
     }
 
     time = _time;
+=======
+bool ConsolePlayer::parseTime (const char *timeStr, uint_least32_t &time)
+{
+    // Check for empty string
+    if (*timeStr == '\0')
+        return false;
+
+    try
+    {
+        const char *sep;
+        uint_least32_t _time;
+        std::vector<char> str(strlen(timeStr)+1);
+
+        strcpy (&str[0], timeStr);
+        sep = strstr (&str[0], ":");
+        if (!sep)
+        {   // User gave seconds
+            _time = atoi (&str[0]);
+        }
+        else
+        {   // Read in MM:SS format
+            char min[3] = {'\0', '\0', '\0'};
+            int  val;
+
+            if (str[0] == ':')
+                return false;
+            min[0]  = str[0];
+            if (str[1] != ':')
+            {
+                min[1]  = str[1];
+                if (str[2] != ':')
+                    return false;
+            }
+
+            val = atoi (min);
+            if (val < 0 || val > 99)
+                return false;
+            _time = (uint_least32_t) val * 60;
+            val   = atoi (sep + 1);
+            if (val < 0 || val > 59)
+                return false;
+            _time += (uint_least32_t) val;
+        }
+
+        time = _time;
+    }
+    catch (...)
+    {
+        return false;
+    }
+>>>>>>> sourceforge-trunk-fix
     return true;
 }
 
@@ -132,6 +229,19 @@ int ConsolePlayer::args (int argc, const char *argv[])
     int  i      = 0;
     bool err    = false;
 
+<<<<<<< HEAD
+=======
+    enum
+    {
+        PRINT_NONE    = 0,
+        PRINT_TITLE   = 1,
+        PRINT_AUTHOR  = 2,
+        PRINT_RELEASE = 3,
+        PRINT_CLOCK   = 4,
+        PRINT_MODEL   = 5
+    } print = PRINT_NONE;
+
+>>>>>>> sourceforge-trunk-fix
     if (argc == 0) // at least one argument required
     {
         displayArgs ();
@@ -139,8 +249,18 @@ int ConsolePlayer::args (int argc, const char *argv[])
     }
 
     // default arg options
+<<<<<<< HEAD
     m_driver.output = OUT_SOUNDCARD;
     m_driver.file   = false;
+=======
+#ifdef HAVE_WAV_ONLY
+    m_driver.output = OUT_WAV;
+    m_driver.file   = true;
+#else
+    m_driver.output = OUT_SOUNDCARD;
+    m_driver.file   = false;
+#endif
+>>>>>>> sourceforge-trunk-fix
     m_driver.sid    = EMU_RESID;
 
     // parse command line arguments
@@ -283,6 +403,7 @@ int ConsolePlayer::args (int argc, const char *argv[])
                 }
             }
 
+<<<<<<< HEAD
             else if (argv[i][1] == 'q')
             {
                 if (argv[i][2] == '\0')
@@ -291,6 +412,8 @@ int ConsolePlayer::args (int argc, const char *argv[])
                     m_quietLevel = atoi(&argv[i][2]);
             }
 
+=======
+>>>>>>> sourceforge-trunk-fix
             // Stereo Options
             else if (strcmp (&argv[i][1], "sl") == 0)
             {   // Left Channel
@@ -342,6 +465,17 @@ int ConsolePlayer::args (int argc, const char *argv[])
                 else
                     m_verboseLevel = atoi(&argv[i][2]);
             }
+<<<<<<< HEAD
+=======
+            // Depreciated
+            else if (argv[i][1] == 'q')
+            {
+                if (argv[i][2] == '\0')
+                    m_verboseLevel = -1;
+                else
+                    m_verboseLevel = -atoi(&argv[i][2]);
+            }
+>>>>>>> sourceforge-trunk-fix
             else if (strncmp (&argv[i][1], "-crc", 4) == 0)
             {
                 m_crc = ~0;
@@ -361,6 +495,7 @@ int ConsolePlayer::args (int argc, const char *argv[])
                 if (argv[i][2] != '\0')
                     m_outfile = &argv[i][2];
             }
+<<<<<<< HEAD
             else if (strncmp (&argv[i][1], "-wav", 4) == 0)
             {
                 m_driver.output = OUT_WAV;
@@ -374,6 +509,28 @@ int ConsolePlayer::args (int argc, const char *argv[])
                 m_driver.file   = true;
                 if (argv[i][4] != '\0')
                     m_outfile = &argv[i][4];
+=======
+            else if (strncmp (&argv[i][1], "-wav=", 5) == 0)
+            {
+                m_driver.output = OUT_WAV;
+                m_driver.file   = true;
+                if (argv[i][6] != '\0')
+                    m_outfile = &argv[i][6];
+            }
+            else if (strncmp (&argv[i][1], "-au=", 4) == 0)
+            {
+                m_driver.output = OUT_AU;
+                m_driver.file   = true;
+                if (argv[i][5] != '\0')
+                    m_outfile = &argv[i][5];
+            }
+            else if (strncmp (&argv[i][1], "-raw=", 5) == 0)
+            {
+                m_driver.output = OUT_RAW;
+                m_driver.file   = true;
+                if (argv[i][6] != '\0')
+                    m_outfile = &argv[i][6];
+>>>>>>> sourceforge-trunk-fix
             }
 
             // Hardware selection
@@ -400,6 +557,21 @@ int ConsolePlayer::args (int argc, const char *argv[])
                 m_cpudebug = true;
             }
 
+<<<<<<< HEAD
+=======
+// Print options
+            else if (strcmp (&argv[i][1], "-print-title") == 0)
+                print = PRINT_TITLE;
+            else if (strcmp (&argv[i][1], "-print-author") == 0)
+                print = PRINT_AUTHOR;
+            else if (strcmp (&argv[i][1], "-print-release") == 0)
+                print = PRINT_RELEASE;
+            else if (strcmp (&argv[i][1], "-print-clock") == 0)
+                print = PRINT_CLOCK;
+            else if (strcmp (&argv[i][1], "-print-model") == 0)
+                print = PRINT_MODEL;
+
+>>>>>>> sourceforge-trunk-fix
             else
             {
                 err = true;
@@ -432,6 +604,43 @@ int ConsolePlayer::args (int argc, const char *argv[])
         return -1;
     }
 
+<<<<<<< HEAD
+=======
+    // Select the desired track
+    m_track.first    = m_tune.selectSong (m_track.first);
+    m_track.selected = m_track.first;
+
+    if (print != PRINT_NONE)
+    {
+        const SidTuneInfo &tuneInfo = m_tune.getInfo ();
+        if (!tuneInfo.musPlayer && (tuneInfo.numberOfInfoStrings == 3))
+        {
+            if (print == PRINT_TITLE)
+                cout << tuneInfo.infoString[0];
+            if (print == PRINT_AUTHOR)
+                cout << tuneInfo.infoString[1];
+            if (print == PRINT_RELEASE)
+                cout << tuneInfo.infoString[2];
+        }
+        if (print == PRINT_CLOCK)
+        {
+            if (tuneInfo.clockSpeed == SIDTUNE_CLOCK_PAL)
+                cout << "PAL";
+            else if (tuneInfo.clockSpeed == SIDTUNE_CLOCK_NTSC)
+                cout << "NTSC";
+        }
+        if (print == PRINT_MODEL)
+        {
+            if (tuneInfo.sidModel1 == SIDTUNE_SIDMODEL_6581)
+                cout << "6581";
+            else if (tuneInfo.sidModel1 == SIDTUNE_SIDMODEL_8580)
+                cout << "8580";
+        }
+        cout << std::flush; // cerr << endl can overtake
+        return 0;
+    }
+
+>>>>>>> sourceforge-trunk-fix
     // If filename specified we can only convert one song
     if (m_outfile != NULL)
         m_track.single = true;
@@ -448,9 +657,12 @@ int ConsolePlayer::args (int argc, const char *argv[])
         return -1;
     }
     
+<<<<<<< HEAD
     // Select the desired track
     m_track.first    = m_tune.selectSong (m_track.first);
     m_track.selected = m_track.first;
+=======
+>>>>>>> sourceforge-trunk-fix
     if (m_track.single)
         m_track.songs = 1;
 
@@ -499,9 +711,15 @@ int ConsolePlayer::args (int argc, const char *argv[])
 #endif
 
     // Configure engine with settings
+<<<<<<< HEAD
     if (m_engine.config (m_engCfg) < 0)
     {   // Config failed
         displayError (m_engine.error ());
+=======
+    if (m_engine->config (m_engCfg) < 0)
+    {   // Config failed
+        displayError (m_engine->error ());
+>>>>>>> sourceforge-trunk-fix
         return -1;
     }
     return 1;
@@ -544,18 +762,45 @@ void ConsolePlayer::displayArgs (const char *arg)
 
         << " -t<num>      set play length in [m:]s format (0 is endless)" << endl
 
+<<<<<<< HEAD
         << " -<v|q>       verbose or quiet (no time display) output" << endl
+=======
+        << " -v[num]      verbose output (positive more, negative quieter)" << endl
+>>>>>>> sourceforge-trunk-fix
         << " -v[p|n][f]   set VIC PAL/NTSC clock speed (default: defined by song)" << endl
         << "              Use 'f' to force the clock by preventing speed fixing" << endl
 
         << " -w[name]     create wav file (default: <datafile>[n].wav)" << endl;
 #ifdef HAVE_HARDSID_BUILDER
     {
+<<<<<<< HEAD
         HardSIDBuilder hs("");
         if (hs.devices (false))
             out << " --hardsid    enable hardsid support" << endl;
     }
 #endif
+=======
+#ifdef HAVE_SID2_COM
+        SidLazyIPtr<ISidUnknown>    unknown (HardSIDBuilderCreate (""));
+        SidLazyIPtr<HardSIDBuilder> hs = unknown;
+#else // Depreciated Interface
+#   ifdef HAVE_EXCEPTIONS
+        HardSIDBuilder *hs = new(std::nothrow) HardSIDBuilder( HARDSID_ID );
+#   else
+        HardSIDBuilder *hs = new HardSIDBuilder( HARDSID_ID );
+#   endif
+#endif // HAVE_SID2_COM
+        if (hs)
+        {
+            if (hs->devices (false))
+                out << " --hardsid    enable hardsid support" << endl;
+#ifndef HAVE_SID2_COM
+            delete hs;
+#endif
+	}
+    }
+#endif // HAVE_HARDSID_BUILDER
+>>>>>>> sourceforge-trunk-fix
     out << endl
         // Changed to new homepage address
         << "Home Page: http://sidplay2.sourceforge.net/" << endl;

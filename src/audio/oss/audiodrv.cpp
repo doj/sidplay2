@@ -15,7 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: audiodrv.cpp,v $
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.6  2002/03/04 19:07:48  s_a_white
  *  Fix C++ use of nothrow.
  *
@@ -85,7 +89,11 @@ void *Audio_OSS::open (AudioConfig &cfg, const char *)
 {
     int mask, format;
     int wantedFormat = 0;
+<<<<<<< HEAD
     int temp;
+=======
+    int temp = 0;
+>>>>>>> sourceforge-trunk-fix
 
     if (_audiofd != -1)
     {
@@ -233,7 +241,11 @@ void *Audio_OSS::open (AudioConfig &cfg, const char *)
     }
 
     ioctl (_audiofd, SNDCTL_DSP_GETBLKSIZE, &temp);
+<<<<<<< HEAD
     cfg.bufSize = (unsigned) temp;
+=======
+    cfg.bufSize = (uint_least32_t) temp;
+>>>>>>> sourceforge-trunk-fix
 #ifdef HAVE_EXCEPTIONS
     _sampleBuffer = new(std::nothrow) int_least8_t[cfg.bufSize];
 #else
@@ -291,8 +303,12 @@ void *Audio_OSS::write ()
 
     }
 
+<<<<<<< HEAD
     auto w = ::write (_audiofd, _sampleBuffer, (size_t) _settings.bufSize);
     (void)w;
+=======
+    ::write (_audiofd, _sampleBuffer, (size_t) _settings.bufSize);
+>>>>>>> sourceforge-trunk-fix
     return _sampleBuffer;
 }
 

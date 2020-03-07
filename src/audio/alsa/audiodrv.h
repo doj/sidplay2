@@ -1,12 +1,22 @@
+<<<<<<< HEAD
 /* c-basic-offset: 4; tab-width: 8; indent-tabs-mode: nil
  * vi: set shiftwidth=4 tabstop=8 expandtab:
  * :indentSize=4:tabSize=8:noTabs=true:
  */
+=======
+>>>>>>> sourceforge-trunk-fix
 // --------------------------------------------------------------------------
 // Advanced Linux Sound Architecture (ALSA) specific audio driver interface.
 // --------------------------------------------------------------------------
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: audiodrv.h,v $
+=======
+ *  $Log: not supported by cvs2svn $
+ *  Revision 1.6  2005/07/18 19:46:44  s_a_white
+ *  Switch from obsolete alsa interface (patch by shd).
+ *
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.5  2002/01/10 19:04:00  s_a_white
  *  Interface changes for audio drivers.
  *
@@ -25,7 +35,12 @@
  *
  ***************************************************************************/
 
+<<<<<<< HEAD
 #pragma once
+=======
+#ifndef audio_alsa_h_
+#define audio_alsa_h_
+>>>>>>> sourceforge-trunk-fix
 
 #include "config.h"
 #ifdef   HAVE_ALSA
@@ -34,6 +49,7 @@
 #define AudioDriver Audio_ALSA
 #endif
 
+<<<<<<< HEAD
 #include <alsa/asoundlib.h>
 #include "../AudioBase.h"
 
@@ -42,6 +58,28 @@ class Audio_ALSA : public AudioBase
 private:  // ------------------------------------------------------- private
     snd_pcm_t * _audioHandle;
     int _alsa_to_frames_divisor;
+=======
+#include <stdio.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
+#ifdef HAVE_ALSA_ASOUNDLIB_H
+#   include <alsa/asoundlib.h>
+#else
+#   include <sys/ioctl.h>
+#   include <sys/asoundlib.h>
+#endif
+#include "../AudioBase.h"
+
+
+class Audio_ALSA: public AudioBase
+{	
+private:  // ------------------------------------------------------- private
+    snd_pcm_t * _audioHandle;
+#ifdef HAVE_ALSA_ASOUNDLIB_H
+    int _alsa_to_frames_divisor;
+#endif
+>>>>>>> sourceforge-trunk-fix
 
     void outOfOrder ();
 
@@ -49,6 +87,7 @@ public:  // --------------------------------------------------------- public
     Audio_ALSA();
     ~Audio_ALSA();
 
+<<<<<<< HEAD
     void* open  (AudioConfig &cfg, const char *name) override;
     void  close () override;
     void* reset () override;
@@ -57,3 +96,15 @@ public:  // --------------------------------------------------------- public
 };
 
 #endif // HAVE_ALSA
+=======
+    void *open  (AudioConfig &cfg, const char *name);
+    void  close ();
+    // Rev 1.2 (saw) - Changed, see AudioBase.h	
+    void *reset ();
+    void *write ();
+    void  pause () {;}
+};
+
+#endif // HAVE_ALSA
+#endif // audio_alsa_h_
+>>>>>>> sourceforge-trunk-fix

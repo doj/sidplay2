@@ -15,7 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: keyboard.cpp,v $
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.8  2004/02/21 11:24:44  s_a_white
  *  Don't lockup when the keyboard input stream is not a terminal.
  *
@@ -45,6 +49,14 @@
 
 #include "keyboard.h"
 
+<<<<<<< HEAD
+=======
+#ifdef HAVE_MINGW
+#   undef  HAVE_UNIX
+#   define HAVE_MSWINDOWS
+#endif
+
+>>>>>>> sourceforge-trunk-fix
 #ifdef HAVE_UNIX
 // Unix console headers
 #   include <ctype.h>
@@ -258,6 +270,7 @@ int _kbhit (void)
 
 char _getch (void)
 {
+<<<<<<< HEAD
     if (infd >= 0)
       {
 	char ch = -1;
@@ -267,6 +280,12 @@ char _getch (void)
 	  }
       }
     return -1;
+=======
+    char ch = -1;
+    if (infd >= 0)
+        read (infd, &ch, 1);
+    return ch;
+>>>>>>> sourceforge-trunk-fix
 }
 
 // Set keyboard to raw mode to getch will work
@@ -320,4 +339,8 @@ void keyboard_disable_raw ()
     }
 }
 
+<<<<<<< HEAD
 #endif // HAVE_LINUX
+=======
+#endif // HAVE_UNIX
+>>>>>>> sourceforge-trunk-fix

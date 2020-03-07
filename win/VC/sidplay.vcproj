@@ -233,6 +233,15 @@
 			Name="Audio Formats"
 			Filter="">
 			<File
+<<<<<<< HEAD
+=======
+				RelativePath="..\..\src\audio\raw\RawFile.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\audio\raw\RawFile.h">
+			</File>
+			<File
+>>>>>>> sourceforge-trunk-fix
 				RelativePath="..\..\src\audio\wav\WavFile.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -278,10 +287,17 @@
 			</FileConfiguration>
 		</File>
 		<File
+<<<<<<< HEAD
 			RelativePath="config.h">
 		</File>
 		<File
 			RelativePath="..\..\include\config.h">
+=======
+			RelativePath="..\..\include\config.h">
+		</File>
+		<File
+			RelativePath="config.h">
+>>>>>>> sourceforge-trunk-fix
 		</File>
 		<File
 			RelativePath="..\..\src\IniConfig.cpp">

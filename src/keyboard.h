@@ -15,7 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: keyboard.h,v $
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.2  2001/07/03 17:46:33  s_a_white
  *  Added A_NONE.
  *
@@ -29,11 +33,19 @@
 
 #include "config.h"
 
+<<<<<<< HEAD
 #ifdef HAVE_MSWINDOWS
 #   include <conio.h>
 #endif
 
 #ifdef HAVE_UNIX
+=======
+#if defined(HAVE_MSWINDOWS) || defined(HAVE_MINGW)
+#   include <conio.h>
+#endif
+
+#if defined(HAVE_UNIX) && !defined(HAVE_MINGW)
+>>>>>>> sourceforge-trunk-fix
     int _kbhit (void);
 #endif
 

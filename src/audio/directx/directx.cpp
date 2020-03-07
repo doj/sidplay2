@@ -16,10 +16,14 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: directx.cpp,v $
  *  Revision 1.7  2002/03/04 19:07:48  s_a_white
  *  Fix C++ use of nothrow.
  *
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.6  2001/12/11 19:38:13  s_a_white
  *  More GCC3 Fixes.
  *

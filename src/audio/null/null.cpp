@@ -16,10 +16,14 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: null.cpp,v $
  *  Revision 1.8  2002/03/07 07:55:59  s_a_white
  *  Removed bad define.
  *
+=======
+ *  $Log: not supported by cvs2svn $
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.7  2002/03/04 19:07:48  s_a_white
  *  Fix C++ use of nothrow.
  *

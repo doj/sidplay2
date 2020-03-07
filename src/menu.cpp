@@ -15,7 +15,24 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
+<<<<<<< HEAD
  *  $Log: menu.cpp,v $
+=======
+ *  $Log: not supported by cvs2svn $
+ *  Revision 1.18  2006/10/30 19:32:06  s_a_white
+ *  Switch sidplay2 class to iinterface.
+ *
+ *  Revision 1.17  2006/10/17 21:36:58  s_a_white
+ *  Restore credit printing on verbose level 3.
+ *
+ *  Revision 1.16  2006/10/16 21:44:42  s_a_white
+ *  Merge verbose and quiet levels.  Prevent quiet level (verbose -2) accessing
+ *  the keyboard in anyway (for background operation).
+ *
+ *  Revision 1.15  2005/05/12 07:01:44  s_a_white
+ *  Add MD5 key to display at verbose level 2.
+ *
+>>>>>>> sourceforge-trunk-fix
  *  Revision 1.14  2004/02/26 18:19:22  s_a_white
  *  Updates for VC7 (use real libstdc++ headers instead of draft ones).
  *
@@ -79,10 +96,17 @@ using std::setfill;
 // Display console menu
 void ConsolePlayer::menu ()
 {
+<<<<<<< HEAD
     const sid2_info_t &info     = m_engine.info ();
     const SidTuneInfo &tuneInfo = *info.tuneInfo;
 
     if (m_quietLevel > 1)
+=======
+    const sid2_info_t &info     = m_engine->info ();
+    const SidTuneInfo &tuneInfo = *info.tuneInfo;
+
+    if (m_verboseLevel < -1)
+>>>>>>> sourceforge-trunk-fix
         return;
 
     // cerr << (char) 12 << '\f'; // New Page
@@ -144,7 +168,11 @@ void ConsolePlayer::menu ()
         consoleTable (tableSeperator);
     }
 
+<<<<<<< HEAD
     if (m_verboseLevel)
+=======
+    if (m_verboseLevel > 0)
+>>>>>>> sourceforge-trunk-fix
     {
         consoleTable  (tableMiddle);
         consoleColour (green, true);
@@ -207,7 +235,11 @@ void ConsolePlayer::menu ()
         cerr << " [LOOPING]";
     cerr << endl;
 
+<<<<<<< HEAD
     if (m_verboseLevel)
+=======
+    if (m_verboseLevel > 0)
+>>>>>>> sourceforge-trunk-fix
     {
         consoleTable  (tableMiddle);
         consoleColour (green, true);
@@ -234,7 +266,11 @@ void ConsolePlayer::menu ()
     }
     cerr << endl;
 
+<<<<<<< HEAD
     if (m_verboseLevel)
+=======
+    if (m_verboseLevel > 0)
+>>>>>>> sourceforge-trunk-fix
     {
         consoleTable  (tableSeperator);
         consoleTable  (tableMiddle);
@@ -276,7 +312,11 @@ void ConsolePlayer::menu ()
         cerr << "Filter = "
              << ((m_filter.enabled == true) ? "Yes" : "No");
         cerr << ", Model = "
+<<<<<<< HEAD
              << (info.tuneInfo->sidModel == SID2_MOS8580 ? "8580" : "6581")
+=======
+             << (info.tuneInfo->sidModel1 == SID2_MOS8580 ? "8580" : "6581")
+>>>>>>> sourceforge-trunk-fix
              << endl;
         consoleTable  (tableMiddle);
         consoleColour (yellow, true);
@@ -314,10 +354,19 @@ void ConsolePlayer::menu ()
             cerr << " Delay        : ";
             consoleColour (white, false);
             cerr << info.powerOnDelay << " (cycles at poweron)" << endl;
+<<<<<<< HEAD
+=======
+            consoleTable  (tableMiddle);
+            consoleColour (yellow, true);
+            cerr << " MD5          : ";
+            consoleColour (white, false);
+            cerr << m_tune.createMD5() << endl;
+>>>>>>> sourceforge-trunk-fix
         }
     }
     consoleTable (tableEnd);
 
+<<<<<<< HEAD
 /*
     cerr << "Credits:\n";
     const char **p;
@@ -345,6 +394,39 @@ void ConsolePlayer::menu ()
     // is not disturbed.
     if ( !m_quietLevel )
         cerr << "00:00";
+=======
+    if (m_verboseLevel > 2)
+    {
+        cerr << "\nCredits:\n\n";
+        const char **p;
+        const char  *credit;
+        p = m_engine->info().credits;
+        while (*p)
+        {
+            credit = *p;
+            while (*credit)
+            {
+                cerr << credit << endl;
+                credit += strlen (credit) + 1;
+            }
+            cerr << endl;
+            p++;
+        }
+    }
+
+    if (m_verboseLevel >= 0)
+    {
+        if (m_driver.file)
+            cerr << "Creating audio file, please wait...";
+        else
+            cerr << "Playing, press ^C to stop...";
+
+        // Get all the text to the screen so music playback
+        // is not disturbed.
+        cerr << "00:00";
+    }
+
+>>>>>>> sourceforge-trunk-fix
     cerr << flush;
 }
 
