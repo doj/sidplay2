@@ -15,7 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
- *  $Log: audiodrv.cpp,v $
+ *  $Log: not supported by cvs2svn $
+ *  Revision 1.6  2005/11/30 23:30:24  s_a_white
+ *  Integrate SunOS driver patch1 from (Patrick Mauritz).  Cannot rely on
+ *  play.buffer_size.  Manpage says sunos audio driver broken with that value
+ *  returning 0 due to not being set.
+ *
  *  Revision 1.5  2002/03/04 19:07:48  s_a_white
  *  Fix C++ use of nothrow.
  *
@@ -51,6 +56,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -90,9 +96,13 @@ void Audio_SunOS::outOfOrder()
 
 void *Audio_SunOS::open (AudioConfig& cfg, const char *)
 {
-    if ((_audiofd =::open (AUDIODEVICE,O_WRONLY,0)) == (-1))
+    const char *audiodev = getenv("AUDIODEV");
+
+    if (!audiodev)
+        audiodev = AUDIODEVICE;
+    if ((_audiofd =::open (audiodev,O_WRONLY,0)) == (-1))
     {
-        perror (AUDIODEVICE);
+        perror (audiodev);
         _errorString = "ERROR: Could not open audio device.\n       See standard error output.";
         return 0;
     }
@@ -101,14 +111,14 @@ void *Audio_SunOS::open (AudioConfig& cfg, const char *)
     int hwdevice;
     if (ioctl (_audiofd, AUDIO_GETDEV, &hwdevice) == (-1))
     {
-        perror (AUDIODEVICE);
+        perror (audiodev);
         _errorString = "AUDIO: No audio hardware device installed.";
         return 0;
     }
     if (hwdevice != AUDIO_DEV_SPEAKERBOX)
     {
         _audiofd = -1;
-        perror (AUDIODEVICE);
+        perror (audiodev);
         _errorString = "AUDIO: Speakerbox not installed/enabled.";
         return 0;
     }
@@ -139,7 +149,7 @@ void *Audio_SunOS::open (AudioConfig& cfg, const char *)
     audio_info myaudio_info;
     if (ioctl (_audiofd, AUDIO_GETINFO, &myaudio_info) == (-1))
     {
-        perror (AUDIODEVICE);
+        perror (audiodev);
         _errorString = "AUDIO: Could not get audio info.\n       See standard error output.";
         return 0;
     }
@@ -154,7 +164,7 @@ void *Audio_SunOS::open (AudioConfig& cfg, const char *)
     myaudio_info.output_muted     = 0;
     if (ioctl (_audiofd,AUDIO_SETINFO,&myaudio_info) == (-1))
     {
-        perror (AUDIODEVICE);
+        perror (audiodev);
         _errorString = "AUDIO: Could not set audio info.\n       See standard error output.";
         return 0;
     }
@@ -163,17 +173,19 @@ void *Audio_SunOS::open (AudioConfig& cfg, const char *)
     cfg.frequency = myaudio_info.play.sample_rate;
     cfg.channels  = myaudio_info.play.channels;
     cfg.encoding  = AUDIO_SIGNED_PCM;
-    cfg.bufSize   = myaudio_info.play.buffer_size;
     cfg.precision = myaudio_info.play.precision;
+    cfg.bufSize   = info.play.buffer_size;
+    if (!cfg.bufSize) // 500ms (must be less than a second)
+        cfg.bufSize = (cfg.frequency * cfg.precision) / (2 * 8 * cfg.channels);
 
     // Copy input parameters. May later be replaced with driver defaults.
     _settings = cfg;
 
     // Allocate memory same size as buffer
 #ifdef HAVE_EXCEPTIONS
-    _sampleBuffer = new(std::nothrow) int_least8_t[myaudio_info.play.buffer_size];
+    _sampleBuffer = new(std::nothrow) int_least8_t[cfg.bufSize];
 #else
-    _sampleBuffer = new int_least8_t[myaudio_info.play.buffer_size];
+    _sampleBuffer = new int_least8_t[cfg.bufSize];
 #endif
 
     _errorString = "OK";

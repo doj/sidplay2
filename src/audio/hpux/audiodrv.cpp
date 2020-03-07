@@ -2,10 +2,7 @@
 // HPPA/HPUX specific audio interface. (very poor)
 // --------------------------------------------------------------------------
 /***************************************************************************
- *  $Log: audiodrv.cpp,v $
- *  Revision 1.7  2002/03/04 19:07:48  s_a_white
- *  Fix C++ use of nothrow.
- *
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.6  2002/01/10 19:04:01  s_a_white
  *  Interface changes for audio drivers.
  *

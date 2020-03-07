@@ -17,10 +17,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /***************************************************************************
- *  $Log: WavFileDefs.h,v $
- *  Revision 1.2  2001/11/22 08:45:38  s_a_white
- *  Added support for WAV_HAVE_IOS_OPENMODE
- *
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.1  2001/01/08 16:41:43  s_a_white
  *  App and Library Seperation
  *

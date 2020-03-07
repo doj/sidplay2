@@ -17,10 +17,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /***************************************************************************
- *  $Log: WavFile.cpp,v $
- *  Revision 1.11  2004/02/26 18:19:52  s_a_white
- *  Updates for VC7 (use real libstdc++ headers instead of draft ones).
- *
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.10  2002/03/04 19:07:48  s_a_white
  *  Fix C++ use of nothrow.
  *

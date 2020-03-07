@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
- *  $Log: AudioConfig.h,v $
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.3  2002/01/10 22:03:27  s_a_white
  *  Namespace not used yet (enable later).
  *
@@ -66,6 +66,15 @@ public:
         channels  = 1;
         encoding  = AUDIO_UNSIGNED_PCM;
         bufSize   = 0;
+    }
+
+    const bool operator==(const AudioConfig& a) const
+    {
+        return frequency == a.frequency
+            && precision == a.precision
+            && channels  == a.channels
+            && encoding  == a.encoding
+            && bufSize   == a.bufSize;
     }
 };
 

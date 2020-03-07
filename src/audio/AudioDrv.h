@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
- *  $Log: AudioDrv.h,v $
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.2  2001/01/18 18:34:30  s_a_white
  *  Support for multiple drivers added.  Drivers are now arranged in
  *  preference order.
@@ -59,5 +59,6 @@
 
 // Add music conversion drivers
 #include "wav/WavFile.h"
+#include "raw/RawFile.h"
 
 #endif // _AudioDrv_h_

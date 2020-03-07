@@ -4,7 +4,7 @@ AC_CONFIG_AUX_DIR(unix)
 AM_CONFIG_HEADER(unix/config.h)
 
 dnl Setup library CURRENT, REVISION and AGE
-AM_INIT_AUTOMAKE(sidplay,2.0.9)
+AM_INIT_AUTOMAKE(sidplay,2.0.10)
 
 AC_CANONICAL_HOST
 
@@ -22,7 +22,7 @@ AC_C_BIGENDIAN
 dnl Checks what version of Unix we have and soundcard support
 AC_CHECK_HEADERS(sys/ioctl.h linux/soundcard.h machine/soundcard.h  \
 soundcard.h sys/audio.h sun/audioio.h sun/dbriio.h sys/audioio.h  \
-audio.h dmedia/audio.h)
+audio.h dmedia/audio.h sys/soundcard.h sys/asoundlib.h alsa/asoundlib.h)
 
 AH_TOP(
 [/* Define supported audio driver */
@@ -44,8 +44,8 @@ case "$host" in
     *cygwin*) AC_DEFINE(HAVE_MMSYSTEM)
         audiodrv_libadd="./audio/mmsystem/libmmsystem.a"
         AC_MSG_RESULT(mmsystem)
-        AUDIO_LDADD=-lwinmm
-        AC_SUBST(AUDIO_LDADD)
+        AUDIO_LDFLAGS=-lwinmm
+        AC_SUBST(AUDIO_LDFLAGS)
         ;;
     *freebsd*) AC_DEFINE(HAVE_OSS)
         audiodrv_libadd="./audio/oss/liboss.a"
@@ -58,21 +58,35 @@ case "$host" in
     *irix*) AC_DEFINE(HAVE_IRIX)
         audiodrv_libadd="./audio/irix/libirix.a"
         AC_MSG_RESULT(irix)
-        AC_CHECK_LIB(audio, main, [AUDIO_LDADD=-laudio AC_SUBST(AUDIO_LDADD)])
+        AC_CHECK_LIB(audio, main, [AUDIO_LDFLAGS=-laudio AC_SUBST(AUDIO_LDFLAGS)])
         ;;
-    *linux*) AC_DEFINE(HAVE_OSS)
-        audiodrv_libadd="./audio/oss/liboss.a"
-        AC_MSG_RESULT(oss)
+    *linux*)
+        WANT_OSS=yes
+        if test "$ac_cv_header_sys_asoundlib_h" = "yes" ||
+           test "$ac_cv_header_alsa_asoundlib_h" = "yes"; then
+            WANT_OSS=no
+        fi
+        AC_ARG_WITH(oss,[  --with-oss              use OSS library for sound [[default=$WANT_OSS]]],[WANT_OSS=$withval])
+        if test "$WANT_OSS" = "no"; then
+            AC_DEFINE(HAVE_ALSA)
+            audiodrv_libadd="./audio/alsa/libalsa.a"
+            AC_MSG_RESULT(alsa)
+            AC_CHECK_LIB(asound, main, [AUDIO_LDFLAGS=-lasound AC_SUBST(AUDIO_LDFLAGS)])
+        else
+            AC_DEFINE(HAVE_OSS)
+            audiodrv_libadd="./audio/oss/liboss.a"
+            AC_MSG_RESULT(oss)
+        fi
         ;;
     *netbsd*) AC_DEFINE(HAVE_OSS)
         audiodrv_libadd="./audio/oss/liboss.a"
         AC_MSG_RESULT(oss)
-        AC_CHECK_LIB(ossaudio, main, [AUDIO_LDADD=-lossaudio AC_SUBST(AUDIO_LDFLAGS)]) 
+        AC_CHECK_LIB(ossaudio, main, [AUDIO_LDFLAGS=-lossaudio AC_SUBST(AUDIO_LDFLAGS)]) 
         ;;
     *qnx*) AC_DEFINE(HAVE_ALSA)
         audiodrv_libadd="./audio/alsa/libalsa.a"
         AC_MSG_RESULT(alsa)
-        AC_CHECK_LIB(asound, main, [AUDIO_LDADD=-lasound AC_SUBST(AUDIO_LDFLAGS)])
+        AC_CHECK_LIB(asound, main, [AUDIO_LDFLAGS=-lasound AC_SUBST(AUDIO_LDFLAGS)])
         ;;
     *sgi*) AC_DEFINE(HAVE_SGI)
         AC_MSG_RESULT(sgi)
@@ -84,6 +98,13 @@ case "$host" in
     *sunos*) AC_DEFINE(HAVE_SUNOS)
         audiodrv_libadd="./audio/sunos/libsunos.a"
         AC_MSG_RESULT(sparc)
+        ;;
+    *mingw*) AC_DEFINE(HAVE_MMSYSTEM)
+        CXXFLAGS="$CXXFLAGS -DHAVE_MINGW"
+        audiodrv_libadd="./audio/mmsystem/libmmsystem.a"
+        AC_MSG_RESULT(mmsystem)
+        AUDIO_LDFLAGS=-lwinmm
+        AC_SUBST(AUDIO_LDFLAGS)
         ;;
     *) AC_DEFINE(HAVE_WAV_ONLY)
         AC_MSG_RESULT(wav only)
@@ -104,6 +125,9 @@ MY_CHECK_IOS_BIN
 MY_CHECK_IOS_OPENMODE
 
 dnl Check for libraries
+dnl MY_FIND_LIB(ltdl,,,ltdl.h)
+dnl AC_SUBST(LIBLTDL_CXXFLAGS)
+dnl AC_SUBST(LIBLTDL_LDFLAGS)
 SID2_LIB_CHECKS
 SID2_FIND_LIBSIDPLAY2
 SID2_FIND_LIBSIDUTILS
@@ -111,9 +135,18 @@ SID2_FIND_LIBSIDUTILS
 # Find sid builder emulations
 SID2_FIND_BUILDERS
 
+dnl Compatibility test new/old code.  Look for COM
+MY_TRY_COMPILE($LIBSIDPLAY2_CXXFLAGS,$LIBSIDPLAY_LDFLAGS,
+               [sidplay/sidunknown.h],
+               [ISidUnknown *i;],sid2_com)
+if test "$sid2_com" = YES; then
+    AC_DEFINE(HAVE_SID2_COM,,[Define to 1 for COM libsidplay2 interface])
+fi
+
 dnl Add absolute directory for header files
 CXXFLAGS="$CXXFLAGS -I\$(top_srcdir)/include \
 \$(LIBSIDPLAY2_CXXFLAGS) \$(LIBSIDUTILS_CXXFLAGS)"
+dnl \$(LIBLTDL_CXXFLAGS)
 
 ACLOCAL_AMFLAGS="-I unix"
 AC_SUBST(ACLOCAL_AMFLAGS)
@@ -132,6 +165,7 @@ src/audio/null/Makefile \
 src/audio/oss/Makefile \
 src/audio/sunos/Makefile \
 src/audio/wav/Makefile \
+src/audio/raw/Makefile \
 unix/Makefile \
 unix/sidplay2.spec \
 )

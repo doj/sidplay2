@@ -15,7 +15,20 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
- *  $Log: menu.cpp,v $
+ *  $Log: not supported by cvs2svn $
+ *  Revision 1.18  2006/10/30 19:32:06  s_a_white
+ *  Switch sidplay2 class to iinterface.
+ *
+ *  Revision 1.17  2006/10/17 21:36:58  s_a_white
+ *  Restore credit printing on verbose level 3.
+ *
+ *  Revision 1.16  2006/10/16 21:44:42  s_a_white
+ *  Merge verbose and quiet levels.  Prevent quiet level (verbose -2) accessing
+ *  the keyboard in anyway (for background operation).
+ *
+ *  Revision 1.15  2005/05/12 07:01:44  s_a_white
+ *  Add MD5 key to display at verbose level 2.
+ *
  *  Revision 1.14  2004/02/26 18:19:22  s_a_white
  *  Updates for VC7 (use real libstdc++ headers instead of draft ones).
  *
@@ -79,10 +92,10 @@ using std::setfill;
 // Display console menu
 void ConsolePlayer::menu ()
 {
-    const sid2_info_t &info     = m_engine.info ();
+    const sid2_info_t &info     = m_engine->info ();
     const SidTuneInfo &tuneInfo = *info.tuneInfo;
 
-    if (m_quietLevel > 1)
+    if (m_verboseLevel < -1)
         return;
 
     // cerr << (char) 12 << '\f'; // New Page
@@ -144,7 +157,7 @@ void ConsolePlayer::menu ()
         consoleTable (tableSeperator);
     }
 
-    if (m_verboseLevel)
+    if (m_verboseLevel > 0)
     {
         consoleTable  (tableMiddle);
         consoleColour (green, true);
@@ -207,7 +220,7 @@ void ConsolePlayer::menu ()
         cerr << " [LOOPING]";
     cerr << endl;
 
-    if (m_verboseLevel)
+    if (m_verboseLevel > 0)
     {
         consoleTable  (tableMiddle);
         consoleColour (green, true);
@@ -234,7 +247,7 @@ void ConsolePlayer::menu ()
     }
     cerr << endl;
 
-    if (m_verboseLevel)
+    if (m_verboseLevel > 0)
     {
         consoleTable  (tableSeperator);
         consoleTable  (tableMiddle);
@@ -276,7 +289,7 @@ void ConsolePlayer::menu ()
         cerr << "Filter = "
              << ((m_filter.enabled == true) ? "Yes" : "No");
         cerr << ", Model = "
-             << (info.tuneInfo->sidModel == SID2_MOS8580 ? "8580" : "6581")
+             << (info.tuneInfo->sidModel1 == SID2_MOS8580 ? "8580" : "6581")
              << endl;
         consoleTable  (tableMiddle);
         consoleColour (yellow, true);
@@ -314,37 +327,46 @@ void ConsolePlayer::menu ()
             cerr << " Delay        : ";
             consoleColour (white, false);
             cerr << info.powerOnDelay << " (cycles at poweron)" << endl;
+            consoleTable  (tableMiddle);
+            consoleColour (yellow, true);
+            cerr << " MD5          : ";
+            consoleColour (white, false);
+            cerr << m_tune.createMD5() << endl;
         }
     }
     consoleTable (tableEnd);
 
-/*
-    cerr << "Credits:\n";
-    const char **p;
-    const char  *credit;
-    p = m_engine.credits ();
-    while (*p)
+    if (m_verboseLevel > 2)
     {
-        credit = *p;
-        while (*credit)
+        cerr << "\nCredits:\n\n";
+        const char **p;
+        const char  *credit;
+        p = m_engine->info().credits;
+        while (*p)
         {
-            cerr << credit << endl;
-            credit += strlen (credit) + 1;
+            credit = *p;
+            while (*credit)
+            {
+                cerr << credit << endl;
+                credit += strlen (credit) + 1;
+            }
+            cerr << endl;
+            p++;
         }
-        cerr << endl;
-        p++;
     }
-*/
 
-    if (m_driver.file)
-        cerr << "Creating audio file, please wait...";
-    else
-        cerr << "Playing, press ^C to stop...";
+    if (m_verboseLevel >= 0)
+    {
+        if (m_driver.file)
+            cerr << "Creating audio file, please wait...";
+        else
+            cerr << "Playing, press ^C to stop...";
 
-    // Get all the text to the screen so music playback
-    // is not disturbed.
-    if ( !m_quietLevel )
+        // Get all the text to the screen so music playback
+        // is not disturbed.
         cerr << "00:00";
+    }
+
     cerr << flush;
 }
 
@@ -353,7 +375,7 @@ void ConsolePlayer::consoleColour (player_colour_t colour, bool bold)
 {
     if ((m_iniCfg.console ()).ansi)
     {
-        char *mode = "";
+        const char *mode = "";
 
         switch (colour)
         {

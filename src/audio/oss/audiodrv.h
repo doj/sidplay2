@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
- *  $Log: audiodrv.h,v $
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.5  2001/10/30 23:35:35  s_a_white
  *  Added pause support.
  *
@@ -61,6 +61,8 @@
 #   include <linux/soundcard.h>
 #elif defined(HAVE_MACHINE_SOUNDCARD_H)
 #   include <machine/soundcard.h>
+#elif defined(HAVE_SYS_SOUNDCARD_H)
+#   include <sys/soundcard.h>
 #elif defined(HAVE_SOUNDCARD_H)
 #   include <soundcard.h>
 #else

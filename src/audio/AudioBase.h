@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
- *  $Log: AudioBase.h,v $
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.4  2001/11/16 19:34:29  s_a_white
  *  Added extension to be used for file audio devices.
  *
@@ -43,7 +43,7 @@ class AudioBase
 {
 protected:
     AudioConfig _settings;
-    char       *_errorString;
+    const char *_errorString;
     void       *_sampleBuffer;
 
 public:

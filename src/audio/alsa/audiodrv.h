@@ -2,7 +2,10 @@
 // Advanced Linux Sound Architecture (ALSA) specific audio driver interface.
 // --------------------------------------------------------------------------
 /***************************************************************************
- *  $Log: audiodrv.h,v $
+ *  $Log: not supported by cvs2svn $
+ *  Revision 1.6  2005/07/18 19:46:44  s_a_white
+ *  Switch from obsolete alsa interface (patch by shd).
+ *
  *  Revision 1.5  2002/01/10 19:04:00  s_a_white
  *  Interface changes for audio drivers.
  *
@@ -35,8 +38,12 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/asoundlib.h>
+#ifdef HAVE_ALSA_ASOUNDLIB_H
+#   include <alsa/asoundlib.h>
+#else
+#   include <sys/ioctl.h>
+#   include <sys/asoundlib.h>
+#endif
 #include "../AudioBase.h"
 
 
@@ -44,6 +51,9 @@ class Audio_ALSA: public AudioBase
 {	
 private:  // ------------------------------------------------------- private
     snd_pcm_t * _audioHandle;
+#ifdef HAVE_ALSA_ASOUNDLIB_H
+    int _alsa_to_frames_divisor;
+#endif
 
     void outOfOrder ();
 

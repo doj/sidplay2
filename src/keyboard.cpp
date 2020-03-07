@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
- *  $Log: keyboard.cpp,v $
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.8  2004/02/21 11:24:44  s_a_white
  *  Don't lockup when the keyboard input stream is not a terminal.
  *
@@ -44,6 +44,11 @@
  ***************************************************************************/
 
 #include "keyboard.h"
+
+#ifdef HAVE_MINGW
+#   undef  HAVE_UNIX
+#   define HAVE_MSWINDOWS
+#endif
 
 #ifdef HAVE_UNIX
 // Unix console headers
@@ -315,4 +320,4 @@ void keyboard_disable_raw ()
     }
 }
 
-#endif // HAVE_LINUX
+#endif // HAVE_UNIX

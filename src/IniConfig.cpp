@@ -15,7 +15,13 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
- *  $Log: IniConfig.cpp,v $
+ *  $Log: not supported by cvs2svn $
+ *  Revision 1.14  2005/06/10 17:13:08  s_a_white
+ *  Initial support for MingW
+ *
+ *  Revision 1.13  2004/11/12 20:41:26  s_a_white
+ *  Fix 2 memory leaks reported by Valgrind
+ *
  *  Revision 1.12  2004/02/26 18:17:27  s_a_white
  *  Use ini_readBool for boolean parameters rather than ini_readInt.
  *
@@ -120,7 +126,7 @@ void IniConfig::clear ()
 }
 
 
-bool IniConfig::readInt (ini_fd_t ini, char *key, int &value)
+bool IniConfig::readInt (ini_fd_t ini, const char *key, int &value)
 {
     int i = value;
     if (ini_locateKey (ini, key) < 0)
@@ -134,7 +140,7 @@ bool IniConfig::readInt (ini_fd_t ini, char *key, int &value)
 }
 
 
-bool IniConfig::readString (ini_fd_t ini, char *key, char *&str)
+bool IniConfig::readString (ini_fd_t ini, const char *key, char *&str)
 {
     char  *ret;
     size_t length;
@@ -165,7 +171,7 @@ IniCofig_readString_error:
 }
 
 
-bool IniConfig::readBool (ini_fd_t ini, char *key, bool &boolean)
+bool IniConfig::readBool (ini_fd_t ini, const char *key, bool &boolean)
 {
     int b = boolean;
     if (ini_locateKey (ini, key) < 0)
@@ -179,7 +185,7 @@ bool IniConfig::readBool (ini_fd_t ini, char *key, bool &boolean)
 }
 
 
-bool IniConfig::readChar (ini_fd_t ini, char *key, char &ch)
+bool IniConfig::readChar (ini_fd_t ini, const char *key, char &ch)
 {
     char *str, c = 0;
     bool  ret = readString (ini, key, str);
@@ -206,7 +212,7 @@ bool IniConfig::readChar (ini_fd_t ini, char *key, char &ch)
 }
 
 
-bool IniConfig::readTime (ini_fd_t ini, char *key, int &value)
+bool IniConfig::readTime (ini_fd_t ini, const char *key, int &value)
 {
     char *str, *sep;
     int   time;
@@ -385,13 +391,13 @@ bool IniConfig::readEmulation (ini_fd_t ini)
 
 void IniConfig::read ()
 {
-    char   *path = (char *) getenv ("HOME");
-    ini_fd_t ini  = 0;
-    char   *configPath;
-    size_t  length;
+    const char *path = getenv ("HOME");
+    ini_fd_t    ini  = 0;
+    char       *configPath;
+    size_t      length;
 
     if (!path)
-        path = (char *) getenv ("windir");
+        path = getenv ("windir");
 
     if (!path)
         path = "";
@@ -401,8 +407,17 @@ void IniConfig::read ()
     if (!configPath)
         goto IniConfig_read_error;
 
+#if defined(HAVE_UNIX) && !defined(HAVE_MINGW)
+    sprintf (configPath, "%s/%s", path, DIR_NAME);
+    // Make sure the config path exists
+    mkdir   (configPath, 0700);
+    sprintf (configPath, "%s/%s", configPath, FILE_NAME);
+#else
+    sprintf (configPath, "%s/%s", path, FILE_NAME);
+#endif
+
     {   // Format path from system
-        char *s = path;
+        char *s = configPath;
         while (*s != '\0')
         {
             if (*s == '\\')
@@ -410,18 +425,6 @@ void IniConfig::read ()
             s++;
         }
     }
-
-#ifdef HAVE_UNIX
-    sprintf (configPath, "%s/%s", path, DIR_NAME);
-
-    // Make sure the config path exists
-    if (!opendir (configPath))
-        mkdir (configPath, 0755);
-
-    sprintf (configPath, "%s/%s", configPath, FILE_NAME);
-#else
-    sprintf (configPath, "%s/%s", path, FILE_NAME);
-#endif
 
     // Opens an existing file or creates a new one
     ini = ini_open (configPath, "w", ";");
@@ -438,12 +441,15 @@ void IniConfig::read ()
     status &= readAudio     (ini);
     status &= readEmulation (ini);
     ini_close (ini);
+    free (configPath);
 return;
 
 IniConfig_read_error:
+    free (configPath);
     if (ini)
         ini_close (ini);
-    clear ();
+    if (configPath)
+        free (configPath);
     status = false;
 }
 

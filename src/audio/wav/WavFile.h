@@ -17,10 +17,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /***************************************************************************
- *  $Log: WavFile.h,v $
- *  Revision 1.6  2004/02/26 18:19:52  s_a_white
- *  Updates for VC7 (use real libstdc++ headers instead of draft ones).
- *
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.5  2002/01/10 18:57:00  s_a_white
  *  Interface changes and fixes for bigendian machines.
  *

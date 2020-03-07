@@ -2,11 +2,7 @@
 // SGI/Irix specific audio interface. (very poor)
 // --------------------------------------------------------------------------
 /***************************************************************************
- *  $Log: audiodrv.cpp,v $
- *  Revision 1.8  2004/05/24 20:30:01  s_a_white
- *  Integrate IRIX patch submitted by Marcus Herbert (Jan 2003) which was
- *  forgotten about and only recently stumbled upon.
- *
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.7  2002/03/04 19:07:48  s_a_white
  *  Fix C++ use of nothrow.
  *

@@ -15,10 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
- *  $Log: config.h,v $
- *  Revision 1.5  2001/12/07 00:41:52  s_a_white
- *  Windows fixes.
- *
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.4  2001/12/05 23:55:05  s_a_white
  *  Added error for unsupported platform.
  *

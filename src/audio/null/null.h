@@ -16,10 +16,7 @@
  *                                                                         *
  ***************************************************************************/
 /***************************************************************************
- *  $Log: null.h,v $
- *  Revision 1.4  2001/10/30 23:35:35  s_a_white
- *  Added pause support.
- *
+ *  $Log: not supported by cvs2svn $
  *  Revision 1.3  2001/07/03 17:54:50  s_a_white
  *  Support for new audio interface for better compatibility.
  *
