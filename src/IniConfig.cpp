@@ -445,7 +445,6 @@ void IniConfig::read ()
 return;
 
 IniConfig_read_error:
-    free (configPath);
     if (ini)
         ini_close (ini);
     if (configPath)
